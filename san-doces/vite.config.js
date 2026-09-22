@@ -10,7 +10,11 @@ export default defineConfig({
                 'resources/css/san-doces.css',
                 'resources/js/san-doces.js',
                 'resources/js/cadastro_usuario.js',
-                'resources/js/login.js'
+                'resources/js/login.js',
+                'resources/js/pedidos.js',
+                'resources/js/produtos.js',
+                'resources/js/cadastro_produto.js',
+                'resources/js/dashboard.js'
             ],
             refresh: true,
             fonts: [

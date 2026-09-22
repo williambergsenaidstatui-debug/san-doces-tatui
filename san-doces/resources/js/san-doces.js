@@ -54,23 +54,46 @@
         });
     });
 
-    const orderForm = document.querySelector('#formulario');
-    if (orderForm) {
-        orderForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const name = orderForm.querySelector('input')?.value || '';
-            const message = `Olá! Meu nome é ${name} e gostaria de fazer uma encomenda.`;
-            window.open(`https://wa.me/5515991444740?text=${encodeURIComponent(message)}`, '_blank');
-        });
-    }
-
     const contactForm = document.querySelector('#mensagem');
     if (contactForm) {
-        contactForm.addEventListener('submit', (event) => {
+        contactForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const name = contactForm.querySelector('input')?.value || '';
-            const message = `Olá! Meu nome é ${name} e gostaria de falar com a San Doces.`;
-            window.open(`https://wa.me/5515991444740?text=${encodeURIComponent(message)}`, '_blank');
+
+            const dados = {
+                nome: document.querySelector('#contato_nome')?.value.trim(),
+                email: document.querySelector('#contato_email')?.value.trim(),
+                whatsapp: document.querySelector('#contato_whatsapp')?.value.trim(),
+                assunto: document.querySelector('#contato_assunto')?.value,
+                mensagem: document.querySelector('#contato_mensagem')?.value.trim(),
+            };
+
+            try {
+                const response = await fetch('/api/mensagem_contato', {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dados),
+                });
+                const resultado = await response.json();
+
+                if (!response.ok || resultado.erro === 's') {
+                    throw new Error(resultado.mensagem || resultado.message || 'Nao foi possivel enviar a mensagem.');
+                }
+
+                contactForm.reset();
+
+                if (window.Swal) {
+                    Swal.fire({ icon: 'success', title: 'Mensagem enviada!', text: resultado.mensagem });
+                }
+            } catch (error) {
+                if (window.Swal) {
+                    Swal.fire({ icon: 'error', title: 'Erro!', text: error.message });
+                } else {
+                    alert(error.message);
+                }
+            }
         });
     }
 });

@@ -66,14 +66,14 @@
             <form id="mensagem" class="form">
                 <h2>Envie uma mensagem</h2>
                 <p>Preencha os campos abaixo e teremos o maior prazer em responder o seu contato.</p>
-                <div class="two"><input required placeholder="Nome completo *"><input type="email" required
+                <div class="two"><input id="contato_nome" name="nome" required placeholder="Nome completo *"><input id="contato_email" name="email" type="email" required
                         placeholder="E-mail *"></div>
-                <div class="two"><input required placeholder="WhatsApp *"><select required>
+                <div class="two"><input id="contato_whatsapp" name="whatsapp" required placeholder="WhatsApp *"><select id="contato_assunto" name="assunto" required>
                         <option value="">Assunto *</option>
                         <option>Dúvida</option>
                         <option>Encomenda</option>
                         <option>Sugestão</option>
-                    </select></div><textarea required
+                    </select></div><textarea id="contato_mensagem" name="mensagem" required
                     placeholder="Sua mensagem *&#10;Escreva aqui sua mensagem..."></textarea><button class="button"
                     type="submit">⌁　Enviar mensagem</button>
                 <div class="secure">♙　 Seus dados estão seguros conosco.<br>&nbsp;&nbsp;&nbsp;&nbsp; Não compartilhamos
@@ -95,7 +95,7 @@
         </div>
     </main>
     <footer class="sd-footer"><div class="sd-footer-main"><div class="sd-footer-intro"><a class="sd-footer-brand" href="{{ route('san-doces.home') }}">SAN<br>DOCES<small>DOCERIA</small></a><p>Doces artesanais feitos com carinho para tornar cada momento ainda mais especial.</p></div><div><h4>Navegação</h4><nav class="sd-footer-links" aria-label="Navegação do rodapé"><a href="{{ route('san-doces.home') }}">Início</a><a href="{{ route('san-doces.produtos') }}">Produtos</a><a href="{{ route('san-doces.sobre-nos') }}">Sobre nós</a><a href="{{ route('san-doces.encomendas') }}">Encomendas</a><a href="{{ route('san-doces.contato') }}">Contato</a></nav></div><div class="sd-footer-contact"><h4>Fale conosco</h4><p>(15) 99144-4740</p><p>@sandoces_confeitaria</p><p>Tatuí — SP</p></div><div class="sd-footer-contact"><h4>Horário</h4><p>Segunda a sábado</p><p>Das 14:30 às 23:30</p><a class="sd-footer-cta" href="https://wa.me/5515991444740" target="_blank" rel="noopener">Fazer pedido pelo WhatsApp →</a></div></div><div class="sd-footer-bottom"><span>© 2026 San Doces. Todos os direitos reservados.</span><span>Doces que tornam a vida mais doce! ♡</span><span>Desenvolvido por <a href="https://brasildash.com.br" target="_blank" rel="noopener noreferrer">Brasildash</a></span><a href="#top">Voltar ao topo ↑</a></div></footer>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </body>
 
 </html>
-

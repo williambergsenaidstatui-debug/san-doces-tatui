@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\EquipamentosController;
+use App\Http\Controllers\DocesController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Middleware\EnsureAdministrador;
@@ -8,24 +8,27 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [LoginController::class, 'login_api'])->middleware('throttle:5,1');
+Route::get('/cardapio', [DocesController::class, 'cardapio']);
+Route::post('/pedido_doces', [DocesController::class, 'pedido_doce'])->middleware('throttle:10,1');
+Route::post('/mensagem_contato', [DocesController::class, 'mensagem_contato'])->middleware('throttle:10,1');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', fn (Request $request) => $request->user());
     Route::post('/logout', [LoginController::class, 'logout']);
-    Route::get('/meus_equipamentos', [EquipamentosController::class, 'meus_equipamentos']);
 
     Route::middleware(EnsureAdministrador::class)->group(function () {
+        Route::get('/dashboard/resumo', [DocesController::class, 'dashboard_resumo']);
         Route::post('/cadastro_usuario', [UsuarioController::class, 'cadastro_usuario']);
-        Route::post('/cadastro_equipamento', [EquipamentosController::class, 'cadastro_equipamento']);
-        Route::get('/listar_equipamentos', [EquipamentosController::class, 'listar_equipamentos']);
-        Route::put('/atualizar_equipamento/{id}', [EquipamentosController::class, 'atualizar_equipamento'])->whereNumber('id');
-        Route::delete('/excluir_equipamento/{id}', [EquipamentosController::class, 'deletar_equipamento'])->whereNumber('id');
-        Route::get('/buscar_equipamento/{id}', [EquipamentosController::class, 'buscar_equipamento'])->whereNumber('id');
-        Route::get('/buscar_equipamento_por_numero_serie/{numero_serie}', [EquipamentosController::class, 'buscar_equipamento_por_numero_serie']);
-        Route::post('/vincular_equipamento', [EquipamentosController::class, 'vincular_equipamento_usuario']);
-        Route::post('/desvincular_equipamento', [EquipamentosController::class, 'desvincular_equipamento_usuario']);
-        Route::get('/listar_equipamentos_por_usuario/{id_usuario}', [EquipamentosController::class, 'listar_equipamentos_usuario'])->whereNumber('id_usuario');
-        Route::get('/listar_equipamentos_disponiveis', [EquipamentosController::class, 'listar_equipamentos_disponiveis']);
+        Route::post('/cadastro_doces', [DocesController::class, 'cadastro_doces']);
+        Route::get('/listar_doces', [DocesController::class, 'listar_doces']);
+        Route::get('/listar_pedidos', [DocesController::class, 'listar_pedidos']);
+        Route::get('/listar_mensagens', [DocesController::class, 'listar_mensagens']);
+        Route::put('/horario_funcionamento', [DocesController::class, 'atualizar_horario_funcionamento']);
+        Route::put('/horarios_encomenda', [DocesController::class, 'atualizar_horarios_encomenda']);
+        Route::get('/buscar_pedidos/{id}', [DocesController::class, 'buscar_pedidos'])->whereNumber('id');
+        Route::patch('/pedidos/{id}/status', [DocesController::class, 'atualizar_status_pedido'])->whereNumber('id');
+        Route::put('/atualizar_doces/{id}', [DocesController::class, 'atualizar_doces'])->whereNumber('id');
+        Route::delete('/excluir_doces/{id}', [DocesController::class, 'deletar_doces'])->whereNumber('id');
+        Route::get('/buscar_doces/{id}', [DocesController::class, 'buscar_doces'])->whereNumber('id');
     });
 });
-

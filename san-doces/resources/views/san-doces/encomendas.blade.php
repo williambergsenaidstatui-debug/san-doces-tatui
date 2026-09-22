@@ -10,10 +10,10 @@
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Sacramento&display=swap"
     rel="stylesheet">
-  @vite(['resources/css/san-doces.css', 'resources/js/san-doces.js'])
+  @vite(['resources/css/san-doces.css', 'resources/js/san-doces.js', 'resources/js/pedidos.js'])
 </head>
 
-<body id="top">
+<body id="top" class="orders-page">
     <header class="site-header">
         <div class="container topbar"><a class="brand" href="{{ route('san-doces.home') }}">SAN<br>DOCES<small>DOCERIA</small></a>
             <nav class="main-nav"><a href="{{ route('san-doces.home') }}">Início</a><a href="{{ route('san-doces.produtos') }}">Produtos</a><a
@@ -63,30 +63,11 @@
         <h2>Nossos produtos　♡</h2>
         <p>Escolha a categoria e veja todas as opções disponíveis.</p>
         <div class="selection">
-          <div class="category-list"><button class="category active">♨　 Bolos　›</button><button class="category">♧　
-              Doces　›</button><button class="category">⌒　 Sobremesas　›</button><button class="category">☆　
-              Personalizados　›</button></div>
-          <div class="cards">
-            <article class="card"><img src="{{ asset('assets/images/bolo-morango.jpg') }}" alt="Bolos">
-              <div><b>Bolos</b>
-                <p>Tradicionais e personalizados para todas as ocasiões.</p>
-              </div>
-            </article>
-            <article class="card"><img src="{{ asset('assets/images/brigadeiros.jpg') }}" alt="Doces">
-              <div><b>Doces</b>
-                <p>Brigadeiros, bombons e muito mais.</p>
-              </div>
-            </article>
-            <article class="card"><img src="{{ asset('assets/images/copos-chocolate-morango.jpg') }}" alt="Sobremesas">
-              <div><b>Sobremesas</b>
-                <p>Taças, copos e delícias irresistíveis.</p>
-              </div>
-            </article>
-            <article class="card"><img src="{{ asset('assets/images/torta-limao.jpg') }}" alt="Bolos personalizados">
-              <div><b>Bolos personalizados</b>
-                <p>Seu momento do seu jeito, com todo carinho.</p>
-              </div>
-            </article>
+          <div id="order-category-list" class="category-list">
+            <button class="category active" type="button" data-category="all">Todos &rsaquo;</button>
+          </div>
+          <div id="order-products" class="cards">
+            <p class="order-products-empty">Carregando produtos...</p>
           </div>
         </div>
       </div>
@@ -94,15 +75,21 @@
         <div class="eyebrow">♨ &nbsp; Faça sua encomenda</div>
         <h2>Conte com a San Doces</h2>
         <p>Preencha o formulário abaixo e nos conte o que você deseja. Vamos adorar preparar algo especial para você!
-        </p><input required placeholder="Nome completo *">
-        <div class="two"><input required placeholder="WhatsApp *"><input type="email" required placeholder="E-mail *">
-        </div><input type="date" required><select required>
+        </p>
+        <div id="order-selected-summary" class="order-selected-summary">
+          <span>Produto selecionado</span>
+          <strong>Nenhum produto escolhido ainda</strong>
+          <small>Clique em um produto do cardápio para preencher o pedido.</small>
+        </div>
+        <input id="nome" name="nome" required placeholder="Nome completo *">
+        <div class="two"><input id="whatsapp" name="whatsapp" required placeholder="WhatsApp *"><input id="email" name="email" type="email" required placeholder="E-mail *">
+        </div><input id="data_encomenda" name="data_encomenda" type="date" required><select id="categoria" name="categoria" required>
           <option value="">Categoria do pedido *</option>
           <option>Bolos</option>
           <option>Doces</option>
           <option>Sobremesas</option>
           <option>Bolos personalizados</option>
-        </select><textarea
+        </select><input id="produto" name="produto" required placeholder="Clique em um produto acima ou descreva seu pedido *"><textarea id="observacao" name="observacao"
           placeholder="Observações (opcional)&#10;Conte-nos mais sobre o seu pedido..."></textarea><button
           class="button" type="submit">◉ &nbsp; Enviar pedido pelo WhatsApp</button>
         <div class="secure">♙ &nbsp; Seus dados estão seguros conosco.<br>&nbsp;&nbsp;&nbsp;&nbsp; Não compartilhamos
@@ -124,7 +111,7 @@
     </div>
   </main>
   <footer class="sd-footer"><div class="sd-footer-main"><div class="sd-footer-intro"><a class="sd-footer-brand" href="{{ route('san-doces.home') }}">SAN<br>DOCES<small>DOCERIA</small></a><p>Doces artesanais feitos com carinho para tornar cada momento ainda mais especial.</p></div><div><h4>Navegação</h4><nav class="sd-footer-links" aria-label="Navegação do rodapé"><a href="{{ route('san-doces.home') }}">Início</a><a href="{{ route('san-doces.produtos') }}">Produtos</a><a href="{{ route('san-doces.sobre-nos') }}">Sobre nós</a><a href="{{ route('san-doces.encomendas') }}">Encomendas</a><a href="{{ route('san-doces.contato') }}">Contato</a></nav></div><div class="sd-footer-contact"><h4>Fale conosco</h4><p>(15) 99144-4740</p><p>@sandoces_confeitaria</p><p>Tatuí — SP</p></div><div class="sd-footer-contact"><h4>Horário</h4><p>Segunda a sábado</p><p>Das 14:30 às 23:30</p><a class="sd-footer-cta" href="https://wa.me/5515991444740" target="_blank" rel="noopener">Fazer pedido pelo WhatsApp →</a></div></div><div class="sd-footer-bottom"><span>© 2026 San Doces. Todos os direitos reservados.</span><span>Doces que tornam a vida mais doce! ♡</span><span>Desenvolvido por <a href="https://brasildash.com.br" target="_blank" rel="noopener noreferrer">Brasildash</a></span><a href="#top">Voltar ao topo ↑</a></div></footer>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
 
 </html>
-

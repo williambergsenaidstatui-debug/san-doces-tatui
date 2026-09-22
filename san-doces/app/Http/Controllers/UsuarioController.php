@@ -11,12 +11,13 @@ class UsuarioController extends Controller
 {
     public function cadastro_usuario_html(): View
     {
-        return view('cadastro_usuario');
+        return view('san-doces.cadastro-user');
     }
 
     public function cadastro_usuario(Request $request): JsonResponse
     {
         $dados = $request->validate([
+            'telefone' => 'nullable|string|max:20',
             'nome' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:usuario,email',
             'senha' => 'required|string|min:6',
@@ -26,7 +27,6 @@ class UsuarioController extends Controller
         $dados['senha'] = md5($dados['senha']);
         Usuario::create($dados);
 
-        return response()->json(['erro' => 'n', 'mensagem' => 'UsuÃ¡rio cadastrado com sucesso'], 201);
+        return response()->json(['erro' => 'n', 'mensagem' => 'Usuario cadastrado com sucesso'], 201);
     }
 }
-

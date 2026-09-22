@@ -12,7 +12,7 @@ class LoginController extends Controller
 {
     public function login_html(): View
     {
-        return view('Login');
+        return view('san-doces.login');
     }
 
     public function login_api(Request $request): JsonResponse

@@ -3,7 +3,7 @@ $(document).ready(function () {
     const botao = $("#cadastro_usuario").prop("disabled", true);
 
     if (!token) {
-        window.location.href = "/login";
+        window.location.href = "/login-dashboard";
         return;
     }
 
@@ -20,7 +20,7 @@ $(document).ready(function () {
         error: function (xhr) {
             if (xhr.status === 401) {
                 sessionStorage.removeItem("tif_token");
-                window.location.href = "/login";
+                window.location.href = "/login-dashboard";
             } else {
                 Swal.fire({ icon: "error", title: "Não foi possível verificar seu acesso" });
             }

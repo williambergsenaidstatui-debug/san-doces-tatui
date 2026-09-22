@@ -1,0 +1,116 @@
+const catalogState = { products: [], category: 'all', query: '' };
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (!document.body.classList.contains('products-page')) return;
+
+    document.querySelector('#catalog-search')?.addEventListener('input', (event) => {
+        catalogState.query = normalizeText(event.target.value);
+        renderCatalog();
+    });
+    loadCatalog();
+});
+
+async function loadCatalog() {
+    const container = document.querySelector('#catalog-products');
+    try {
+        const response = await fetch('/api/cardapio', { headers: { Accept: 'application/json' } });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Nao foi possivel carregar o cardapio.');
+
+        catalogState.products = Array.isArray(data) ? data : [];
+        renderCategories();
+        renderCatalog();
+    } catch (error) {
+        container.innerHTML = `<div class="catalog-empty error">${escapeHtml(error.message)}</div>`;
+    }
+}
+
+function renderCategories() {
+    const container = document.querySelector('#catalog-categories');
+    if (!container) return;
+
+    const categories = [...new Set(catalogState.products.map((product) => product.categoria).filter(Boolean))];
+    container.innerHTML = `
+        <button class="category active" type="button" data-category="all"><span class="category-icon">▦</span><span>Todos os produtos<small>${catalogState.products.length} ${catalogState.products.length === 1 ? 'produto' : 'produtos'}</small></span></button>
+        ${categories.map((category) => {
+            const count = categoryCount(category);
+            return `<button class="category" type="button" data-category="${escapeHtml(category)}"><span class="category-icon">${categoryIcon(category)}</span><span>${escapeHtml(category)}<small>${count} ${count === 1 ? 'produto' : 'produtos'}</small></span></button>`;
+        }).join('')}
+        <div class="love-note">Feito<br>com<br>amor ♡</div>`;
+
+    container.querySelectorAll('[data-category]').forEach((button) => {
+        button.addEventListener('click', () => {
+            catalogState.category = button.dataset.category;
+            container.querySelectorAll('[data-category]').forEach((item) => item.classList.remove('active'));
+            button.classList.add('active');
+            renderCatalog();
+        });
+    });
+}
+
+function renderCatalog() {
+    const container = document.querySelector('#catalog-products');
+    if (!container) return;
+
+    const filtered = catalogState.products.filter((product) => {
+        const sameCategory = catalogState.category === 'all' || product.categoria === catalogState.category;
+        const searchable = normalizeText([product.nome, product.categoria, product.sobre, product.descricao].filter(Boolean).join(' '));
+        return sameCategory && searchable.includes(catalogState.query);
+    });
+
+    if (!filtered.length) {
+        container.innerHTML = `<div class="catalog-empty">${catalogState.products.length ? 'Nenhum produto encontrado.' : 'Nenhum produto cadastrado ainda.'}</div>`;
+        return;
+    }
+
+    container.innerHTML = [...groupByCategory(filtered).entries()].map(([category, products]) => `
+        <section class="product-group">
+            <div class="group-title"><h3>${escapeHtml(category)}</h3><span>${products.length} ${products.length === 1 ? 'opcao' : 'opcoes'}</span></div>
+            <div class="card-grid">${products.map(productCard).join('')}</div>
+        </section>`).join('');
+}
+
+function productCard(product) {
+    return `<article class="product-card" data-name="${escapeHtml(product.nome)}">
+        <div class="product-image"><img src="${escapeHtml(productImage(product))}" alt="${escapeHtml(product.nome)}" loading="lazy"><b class="heart" aria-hidden="true">♡</b></div>
+        <div class="product-info"><h4>${escapeHtml(product.nome)}</h4><p>${escapeHtml(product.sobre || product.descricao || '')}</p><div class="price">R$ ${formatPrice(product.preco)}</div><a class="details" href="/encomendas?produto=${encodeURIComponent(product.id)}">Fazer pedido →</a></div>
+    </article>`;
+}
+
+function groupByCategory(products) {
+    return products.reduce((groups, product) => {
+        const category = product.categoria || 'Outros';
+        if (!groups.has(category)) groups.set(category, []);
+        groups.get(category).push(product);
+        return groups;
+    }, new Map());
+}
+
+function categoryCount(category) {
+    return catalogState.products.filter((product) => product.categoria === category).length;
+}
+
+function categoryIcon(category) {
+    const value = normalizeText(category);
+    if (value.includes('bolo')) return '♕';
+    if (value.includes('doce') || value.includes('brigadeiro') || value.includes('bombom')) return '●';
+    if (value.includes('sobremesa') || value.includes('taca') || value.includes('copo')) return '◇';
+    return '♡';
+}
+
+function productImage(product) {
+    if (!product.imagem) return '/assets/images/bolo-morango.jpg';
+    return product.imagem.startsWith('http') || product.imagem.startsWith('/') ? product.imagem : `/${product.imagem}`;
+}
+
+function formatPrice(value) {
+    return Number(value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function normalizeText(value) {
+    return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[character]));
+}

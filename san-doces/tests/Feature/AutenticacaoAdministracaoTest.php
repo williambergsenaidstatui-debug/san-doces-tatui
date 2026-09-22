@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\EquipamentosModel;
+use App\Models\DocesprodutosModel;
 use App\Models\Usuario;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
 use Laravel\Sanctum\PersonalAccessToken;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -65,7 +67,7 @@ class AutenticacaoAdministracaoTest extends TestCase
         $usuario = Usuario::factory()->create();
         $token = $usuario->createToken('usuario')->plainTextToken;
         $this->api($method, $uri, ['is_admin' => true, 'id_usuario' => $usuario->id], $token)->assertForbidden();
-        $this->assertDatabaseCount('equipamentos', 0);
+        $this->assertDatabaseCount('doces', 0);
         $this->assertDatabaseCount('usuario', 1);
     }
 
@@ -73,16 +75,11 @@ class AutenticacaoAdministracaoTest extends TestCase
     {
         return [
             ['POST', '/api/cadastro_usuario'],
-            ['POST', '/api/cadastro_equipamento'],
-            ['GET', '/api/listar_equipamentos'],
-            ['PUT', '/api/atualizar_equipamento/1'],
-            ['DELETE', '/api/excluir_equipamento/1'],
-            ['GET', '/api/buscar_equipamento/1'],
-            ['GET', '/api/buscar_equipamento_por_numero_serie/serie'],
-            ['POST', '/api/vincular_equipamento'],
-            ['POST', '/api/desvincular_equipamento'],
-            ['GET', '/api/listar_equipamentos_por_usuario/1'],
-            ['GET', '/api/listar_equipamentos_disponiveis'],
+            ['POST', '/api/cadastro_doces'],
+            ['GET', '/api/listar_doces'],
+            ['PUT', '/api/atualizar_doces/1'],
+            ['DELETE', '/api/excluir_doces/1'],
+            ['GET', '/api/buscar_doces/1'],
         ];
     }
 
@@ -103,42 +100,54 @@ class AutenticacaoAdministracaoTest extends TestCase
         $this->api('POST', '/api/cadastro_usuario', $dados, $token)->assertUnprocessable()->assertJsonValidationErrors('email');
     }
 
-    public function test_admin_can_manage_equipment_and_links(): void
+    public function test_admin_can_manage_doces(): void
     {
         $admin = Usuario::factory()->administrador()->create();
-        $usuario = Usuario::factory()->create();
         $token = $admin->createToken('admin')->plainTextToken;
-        $dados = EquipamentosModel::factory()->make()->toArray();
-        $this->api('POST', '/api/cadastro_equipamento', $dados, $token)->assertCreated();
-        $equipamento = EquipamentosModel::firstOrFail();
-        $this->api('PUT', '/api/atualizar_equipamento/'.$equipamento->id, [...$dados, 'modelo' => 'Novo'], $token)->assertOk();
-        $this->api('GET', '/api/buscar_equipamento/'.$equipamento->id, [], $token)->assertOk()->assertJsonPath('modelo', 'Novo');
-        $this->api('GET', '/api/buscar_equipamento_por_numero_serie/'.$equipamento->numero_serie, [], $token)->assertOk();
-        $this->api('POST', '/api/vincular_equipamento', ['id_usuario' => $usuario->id, 'id_equipamento' => $equipamento->id], $token)->assertOk();
-        $this->assertDatabaseHas('equipamentos', ['id' => $equipamento->id, 'id_usuario' => $usuario->id]);
-        $this->api('GET', '/api/listar_equipamentos_disponiveis', [], $token)->assertOk()->assertJsonCount(0);
-        $this->api('GET', '/api/listar_equipamentos_por_usuario/'.$usuario->id, [], $token)->assertOk()->assertJsonCount(1);
-        $this->api('POST', '/api/desvincular_equipamento', ['id_equipamento' => $equipamento->id], $token)->assertOk();
-        $this->assertDatabaseHas('equipamentos', ['id' => $equipamento->id, 'id_usuario' => null]);
-        $this->api('DELETE', '/api/excluir_equipamento/'.$equipamento->id, [], $token)->assertOk();
-        $this->assertDatabaseCount('equipamentos', 0);
+        $dados = DocesprodutosModel::factory()->make()->toArray();
+        $this->api('POST', '/api/cadastro_doces', $dados, $token)->assertCreated();
+        $doce = DocesprodutosModel::firstOrFail();
+        $this->api('PUT', '/api/atualizar_doces/'.$doce->id, [...$dados, 'nome' => 'Brigadeiro novo'], $token)->assertOk();
+        $this->api('GET', '/api/buscar_doces/'.$doce->id, [], $token)->assertOk()->assertJsonPath('nome', 'Brigadeiro novo');
+        $this->api('GET', '/api/listar_doces', [], $token)->assertOk()->assertJsonCount(1);
+        $this->getJson('/api/cardapio')->assertOk()->assertJsonCount(1)->assertJsonPath('0.nome', 'Brigadeiro novo');
+        $this->api('DELETE', '/api/excluir_doces/'.$doce->id, [], $token)->assertOk();
+        $this->assertDatabaseCount('doces', 0);
     }
 
-    public function test_invalid_links_are_rejected_and_user_only_sees_own_equipment(): void
+    public function test_admin_can_upload_and_delete_product_image(): void
     {
-        $usuario = Usuario::factory()->create();
-        $outro = Usuario::factory()->create();
+        Storage::fake('public');
         $admin = Usuario::factory()->administrador()->create();
-        $proprio = EquipamentosModel::factory()->create(['id_usuario' => $usuario->id]);
-        EquipamentosModel::factory()->create(['id_usuario' => $outro->id]);
-        EquipamentosModel::factory()->create();
-        $token = $usuario->createToken('usuario')->plainTextToken;
-        $this->api('GET', '/api/meus_equipamentos?id_usuario='.$outro->id, [], $token)->assertOk()->assertJsonCount(1)->assertJsonPath('0.id', $proprio->id);
-        $adminToken = $admin->createToken('admin')->plainTextToken;
-        $this->api('POST', '/api/vincular_equipamento', ['id_usuario' => 999999, 'id_equipamento' => $proprio->id], $adminToken)->assertUnprocessable();
-        $this->assertDatabaseHas('equipamentos', ['id' => $proprio->id, 'id_usuario' => $usuario->id]);
-        $usuario->delete();
-        $this->assertDatabaseHas('equipamentos', ['id' => $proprio->id, 'id_usuario' => null]);
+        $token = $admin->createToken('admin')->plainTextToken;
+        $dados = DocesprodutosModel::factory()->make()->toArray();
+        $imagem = UploadedFile::fake()->image('bolo.jpg', 800, 600);
+
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->post('/api/cadastro_doces', [...$dados, 'imagem_upload' => $imagem])
+            ->assertCreated();
+
+        $caminho = $response->json('doce.imagem');
+        $this->assertStringStartsWith('storage/produtos/', $caminho);
+        Storage::disk('public')->assertExists(substr($caminho, strlen('storage/')));
+
+        $doce = DocesprodutosModel::firstOrFail();
+        $this->api('DELETE', '/api/excluir_doces/'.$doce->id, [], $token)->assertOk();
+        Storage::disk('public')->assertMissing(substr($caminho, strlen('storage/')));
+    }
+
+    public function test_admin_can_save_a_web_image_url(): void
+    {
+        $admin = Usuario::factory()->administrador()->create();
+        $token = $admin->createToken('admin')->plainTextToken;
+        $dados = DocesprodutosModel::factory()->make()->toArray();
+        $url = 'https://images.example.com/bolo.jpg';
+
+        $this->api('POST', '/api/cadastro_doces', [...$dados, 'imagem' => $url], $token)
+            ->assertCreated()
+            ->assertJsonPath('doce.imagem', $url);
+
+        $this->assertDatabaseHas('doces', ['imagem' => $url]);
     }
 
     public function test_administrator_can_be_created_from_terminal(): void
