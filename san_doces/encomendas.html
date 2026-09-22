@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encomendas | San Doces</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Sacramento&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --wine: #ad405a;
+      --ink: #532a33;
+      --cream: #fff9f6;
+      --pink: #f9dedb
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 28px
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit
+    }
+
+    .logo {
+      color: var(--wine);
+      font: 600 29px/.78 'Playfair Display', serif;
+      letter-spacing: -1.5px;
+      text-align: center
+    }
+
+    .logo small {
+      display: block;
+      margin-top: 8px;
+      font: 600 7px 'DM Sans';
+      letter-spacing: 3px
+    }
+
+    header {
+      height: 88px;
+      display: flex;
+      align-items: center;
+      background: #fffaf7
+    }
+
+    .bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%
+    }
+
+    nav {
+      display: flex;
+      gap: 38px;
+      font-size: 12px;
+      font-weight: 600
+    }
+
+    nav .active {
+      color: var(--wine);
+      border-bottom: 2px solid var(--wine);
+      padding-bottom: 9px
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 23px;
+      border: 0;
+      border-radius: 25px;
+      background: var(--wine);
+      color: #fff;
+      font: 700 12px 'DM Sans';
+      cursor: pointer
+    }
+
+    .eyebrow {
+      color: var(--wine);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      text-transform: uppercase
+    }
+
+    .hero {
+      min-height: 350px;
+      background: linear-gradient(90deg, rgba(255, 224, 221, .98), rgba(255, 224, 221, .87) 45%, rgba(255, 224, 221, .02) 77%), url('assets/images/copos-chocolate-morango.jpg') 76% center/cover
+    }
+
+    .hero .container {
+      padding-top: 37px
+    }
+
+    .hero h1,
+    h2 {
+      margin: 9px 0;
+      color: var(--wine);
+      font-family: 'Playfair Display', serif
+    }
+
+    .hero h1 {
+      max-width: 430px;
+      font-size: 48px;
+      line-height: 1.02;
+      font-style: italic
+    }
+
+    .hero p {
+      max-width: 380px;
+      line-height: 1.5
+    }
+
+    .hero-cats {
+      display: flex;
+      gap: 25px;
+      margin-top: 19px
+    }
+
+    .hero-cats div {
+      font-size: 11px;
+      text-align: center
+    }
+
+    .hero-cats span {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin: auto auto 6px;
+      border-radius: 50%;
+      background: #f9e2e0;
+      color: var(--wine);
+      font-size: 24px
+    }
+
+    .steps {
+      padding: 29px 28px 16px
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--wine);
+      font: 600 27px 'Playfair Display', serif
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 19px;
+      margin-top: 14px
+    }
+
+    .step {
+      min-height: 125px;
+      padding: 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #fff, #f8e7e4)
+    }
+
+    .step b {
+      display: inline-grid;
+      place-items: center;
+      width: 45px;
+      height: 45px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--wine);
+      color: #fff;
+      font: 600 25px 'Playfair Display'
+    }
+
+    .step h3 {
+      display: inline;
+      color: var(--wine);
+      font-size: 13px
+    }
+
+    .step p {
+      margin: 10px 0 0 55px;
+      color: #745c61;
+      font-size: 11px;
+      line-height: 1.45
+    }
+
+    .order-area {
+      display: grid;
+      grid-template-columns: 1.55fr .8fr;
+      gap: 30px;
+      padding: 0 28px 35px
+    }
+
+    .products h2 {
+      font-size: 26px
+    }
+
+    .products>p {
+      margin-top: -4px;
+      font-size: 12px
+    }
+
+    .selection {
+      display: grid;
+      grid-template-columns: 175px 1fr;
+      gap: 18px;
+      margin-top: 16px
+    }
+
+    .category {
+      display: block;
+      width: 100%;
+      margin-bottom: 9px;
+      padding: 16px;
+      border: 0;
+      border-radius: 12px;
+      background: #f9e6e4;
+      color: var(--wine);
+      text-align: left;
+      font: 600 12px 'DM Sans';
+      cursor: pointer
+    }
+
+    .category.active {
+      background: var(--wine);
+      color: #fff
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px
+    }
+
+    .card {
+      overflow: hidden;
+      border: 1px solid #f0dbd8;
+      border-radius: 9px;
+      background: #fff
+    }
+
+    .card img {
+      display: block;
+      width: 100%;
+      height: 112px;
+      object-fit: cover
+    }
+
+    .card div {
+      padding: 9px
+    }
+
+    .card b {
+      color: var(--wine);
+      font-size: 12px
+    }
+
+    .card p {
+      margin: 5px 0 0;
+      color: #816b70;
+      font-size: 10px;
+      line-height: 1.35
+    }
+
+    .form {
+      padding: 22px 18px;
+      border-radius: 13px;
+      background: linear-gradient(140deg, #fbe9e6, #f7d4d7)
+    }
+
+    .form h2 {
+      font-size: 25px
+    }
+
+    .form>p {
+      font-size: 11px;
+      line-height: 1.4
+    }
+
+    .form input,
+    .form select,
+    .form textarea {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid #edcfcd;
+      border-radius: 7px;
+      background: #fffaf9;
+      color: #724a55;
+      font: 11px 'DM Sans'
+    }
+
+    .form .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px
+    }
+
+    .form textarea {
+      height: 77px;
+      resize: vertical
+    }
+
+    .form button {
+      width: 100%;
+      margin-top: 12px
+    }
+
+    .secure {
+      margin: 13px 4px 0;
+      color: #83696d;
+      font-size: 10px;
+      line-height: 1.45
+    }
+
+    .celebrate {
+      margin-bottom: 32px;
+      padding: 27px;
+      border-radius: 11px;
+      color: #fff;
+      background: linear-gradient(90deg, rgba(102, 27, 43, .9), rgba(183, 69, 91, .56)), url('assets/images/cardapio-doces.jpg') center/cover
+    }
+
+    .celebrate h2 {
+      margin: 0;
+      color: #fff;
+      font: 45px/.9 'Sacramento', cursive
+    }
+
+    .celebrate p {
+      max-width: 290px;
+      font-size: 12px;
+      line-height: 1.45
+    }
+
+    .celebrate .button {
+      border: 1px solid #fff;
+      background: transparent
+    }
+
+    .celebrate-items {
+      display: flex;
+      justify-content: flex-end;
+      gap: 18px;
+      margin-top: -90px
+    }
+
+    .celebrate-items div {
+      width: 82px;
+      font-size: 10px;
+      text-align: center
+    }
+
+    .celebrate-items span {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      margin: auto auto 7px;
+      border: 1px solid #fff;
+      border-radius: 50%;
+      font-size: 25px
+    }
+
+    footer {
+      padding: 24px 0;
+      color: #fff;
+      background: linear-gradient(100deg, #81293f, #ad405a)
+    }
+
+    footer .logo {
+      color: #fff;
+      font-size: 22px
+    }
+
+    footer span {
+      font-size: 10px
+    }
+
+    @media(max-width:780px) {
+      .container {
+        padding: 0 18px
+      }
+
+      header {
+        height: 70px
+      }
+
+      nav {
+        display: none
+      }
+
+      .hero {
+        min-height: 420px;
+        background-position: 65% center
+      }
+
+      .hero h1 {
+        font-size: 38px
+      }
+
+      .hero-cats {
+        gap: 10px
+      }
+
+      .steps,
+      .order-area {
+        padding-left: 18px;
+        padding-right: 18px
+      }
+
+      .steps-grid,
+      .order-area,
+      .selection {
+        grid-template-columns: 1fr
+      }
+
+      .step p {
+        margin-left: 0
+      }
+
+      .selection {
+        gap: 12px
+      }
+
+      .category-list {
+        display: flex;
+        gap: 8px;
+        overflow: auto
+      }
+
+      .category {
+        min-width: 145px
+      }
+
+      .celebrate-items {
+        justify-content: flex-start;
+        margin-top: 25px;
+        overflow: auto
+      }
+
+      .bar {
+        gap: 13px
+      }
+
+      footer span {
+        text-align: center
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="styles/principal.css">
+</head>
+
+<body id="top">
+    <header class="site-header">
+        <div class="container topbar"><a class="brand" href="home.html">SAN<br>DOCES<small>DOCERIA</small></a>
+            <nav class="main-nav"><a href="home.html">Início</a><a href="produtos.html">Produtos</a><a
+                    href="sobre-nos.html">Sobre Nós</a><a class="active" href="encomendas.html">Encomendas</a><a
+                    href="contato.html">Contato</a></nav><a class="main-btn" href="#formulario"><svg class="icon"
+                    viewBox="0 0 24 24">
+                    <path
+                        d="M20.5 3.5A10.8 10.8 0 0 0 12.9 1C7 1 2.2 5.8 2.2 11.7c0 1.9.5 3.7 1.4 5.3L2 23l6.2-1.6a10.7 10.7 0 0 0 4.7 1.1h.1c5.9 0 10.7-4.8 10.7-10.7 0-2.9-1.1-5.6-3.2-7.7Z" />
+                    <path
+                        d="M8 6.8c.2-.4.4-.4.7-.4h.6c.2 0 .4.1.5.4l1 2.3c.1.3.1.5-.1.7l-.7.8c-.1.1-.1.3 0 .4.5 1 1.3 1.9 2.3 2.4.2.1.3.1.5 0l.8-.9c.2-.2.4-.2.7-.1l2.1 1c.3.1.4.3.4.5 0 .4-.2 1.3-.6 1.7-.4.4-1 .6-1.7.5-1.1-.2-2.5-.8-4.2-2.4-1.3-1.2-2.2-2.7-2.4-4.1-.1-.7.1-1.3.5-1.8Z" />
+                </svg>Fazer pedido</a>
+        </div>
+    </header>
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="eyebrow">Encomendas</div>
+        <h1>Seu momento<br>mais doce começa<br>aqui! ♡</h1>
+        <p>Faça sua encomenda e deixe cada ocasião ainda mais especial com os nossos doces gourmet!</p>
+        <div class="hero-cats">
+          <div><span>♨</span>Bolos</div>
+          <div><span>♧</span>Doces</div>
+          <div><span>⌒</span>Sobremesas</div>
+          <div><span>☆</span>Personalizados</div>
+        </div>
+      </div>
+    </section>
+    <section class="container steps">
+      <div class="title">Como fazer sua encomenda?　♡</div>
+      <div class="steps-grid">
+        <article class="step"><b>1</b>
+          <h3>Escolha os produtos</h3>
+          <p>Veja nosso cardápio e selecione o que deseja.</p>
+        </article>
+        <article class="step"><b>2</b>
+          <h3>Entre em contato</h3>
+          <p>Nos chame pelo WhatsApp para confirmar sua encomenda.</p>
+        </article>
+        <article class="step"><b>3</b>
+          <h3>Combinamos os detalhes</h3>
+          <p>Data, horário e forma de pagamento.</p>
+        </article>
+        <article class="step"><b>4</b>
+          <h3>Seu pedido é preparado</h3>
+          <p>Tudo feito com muito amor e carinho!</p>
+        </article>
+      </div>
+    </section>
+    <section class="container order-area">
+      <div class="products">
+        <h2>Nossos produtos　♡</h2>
+        <p>Escolha a categoria e veja todas as opções disponíveis.</p>
+        <div class="selection">
+          <div class="category-list"><button class="category active">♨　 Bolos　›</button><button class="category">♧　
+              Doces　›</button><button class="category">⌒　 Sobremesas　›</button><button class="category">☆　
+              Personalizados　›</button></div>
+          <div class="cards">
+            <article class="card"><img src="assets/images/bolo-morango.jpg" alt="Bolos">
+              <div><b>Bolos</b>
+                <p>Tradicionais e personalizados para todas as ocasiões.</p>
+              </div>
+            </article>
+            <article class="card"><img src="assets/images/brigadeiros.jpg" alt="Doces">
+              <div><b>Doces</b>
+                <p>Brigadeiros, bombons e muito mais.</p>
+              </div>
+            </article>
+            <article class="card"><img src="assets/images/copos-chocolate-morango.jpg" alt="Sobremesas">
+              <div><b>Sobremesas</b>
+                <p>Taças, copos e delícias irresistíveis.</p>
+              </div>
+            </article>
+            <article class="card"><img src="assets/images/torta-limao.jpg" alt="Bolos personalizados">
+              <div><b>Bolos personalizados</b>
+                <p>Seu momento do seu jeito, com todo carinho.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+      <form id="formulario" class="form">
+        <div class="eyebrow">♨ &nbsp; Faça sua encomenda</div>
+        <h2>Conte com a San Doces</h2>
+        <p>Preencha o formulário abaixo e nos conte o que você deseja. Vamos adorar preparar algo especial para você!
+        </p><input required placeholder="Nome completo *">
+        <div class="two"><input required placeholder="WhatsApp *"><input type="email" required placeholder="E-mail *">
+        </div><input type="date" required><select required>
+          <option value="">Categoria do pedido *</option>
+          <option>Bolos</option>
+          <option>Doces</option>
+          <option>Sobremesas</option>
+          <option>Bolos personalizados</option>
+        </select><textarea
+          placeholder="Observações (opcional)&#10;Conte-nos mais sobre o seu pedido..."></textarea><button
+          class="button" type="submit">◉ &nbsp; Enviar pedido pelo WhatsApp</button>
+        <div class="secure">♙ &nbsp; Seus dados estão seguros conosco.<br>&nbsp;&nbsp;&nbsp;&nbsp; Não compartilhamos
+          suas informações.</div>
+      </form>
+    </section>
+    <section class="container celebrate">
+      <h2>Vai comemorar? ♡</h2>
+      <p>Temos opções especiais para aniversários, casamentos, eventos, datas especiais e para aquele café da tarde
+        perfeito!</p><a class="button" href="produtos.html">Ver opções de encomendas　→</a>
+      <div class="celebrate-items">
+        <div><span>♨</span>Aniversários</div>
+        <div><span>◯◯</span>Casamentos</div>
+        <div><span>♧</span>Eventos</div>
+        <div><span>♡</span>Datas especiais</div>
+        <div><span>☕</span>Café da tarde</div>
+      </div>
+    </section>
+  </main>
+  <footer class="sd-footer"><div class="sd-footer-main"><div class="sd-footer-intro"><a class="sd-footer-brand" href="home.html">SAN<br>DOCES<small>DOCERIA</small></a><p>Doces artesanais feitos com carinho para tornar cada momento ainda mais especial.</p></div><div><h4>Navegação</h4><nav class="sd-footer-links" aria-label="Navegação do rodapé"><a href="home.html">Início</a><a href="produtos.html">Produtos</a><a href="sobre-nos.html">Sobre nós</a><a href="encomendas.html">Encomendas</a><a href="contato.html">Contato</a></nav></div><div class="sd-footer-contact"><h4>Fale conosco</h4><p>(15) 99144-4740</p><p>@sandoces_confeitaria</p><p>Tatuí — SP</p></div><div class="sd-footer-contact"><h4>Horário</h4><p>Segunda a sábado</p><p>Das 14:30 às 23:30</p><a class="sd-footer-cta" href="https://wa.me/5515991444740" target="_blank" rel="noopener">Fazer pedido pelo WhatsApp →</a></div></div><div class="sd-footer-bottom"><span>© 2026 San Doces. Todos os direitos reservados.</span><span>Doces que tornam a vida mais doce! ♡</span><a href="#top">Voltar ao topo ↑</a></div></footer>
+  <script>document.querySelectorAll('.category').forEach(b => b.onclick = () => { document.querySelectorAll('.category').forEach(x => x.classList.remove('active')); b.classList.add('active') }); document.querySelector('form').onsubmit = e => { e.preventDefault(); const name = e.target.querySelector('input').value; window.open('https://wa.me/5515991444740?text=' + encodeURIComponent('Olá! Meu nome é ' + name + ' e gostaria de fazer uma encomenda.'), '_blank') };</script>
+</body>
+
+</html>

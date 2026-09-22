@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato | San Doces</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Sacramento&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --wine: #ad405a;
+            --ink: #552c35;
+            --cream: #fff9f6;
+            --pink: #f9e1df
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--cream);
+            color: var(--ink);
+            font-family: 'DM Sans', sans-serif
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 28px
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit
+        }
+
+        .logo {
+            color: var(--wine);
+            font: 600 29px/.78 'Playfair Display', serif;
+            letter-spacing: -1.5px;
+            text-align: center
+        }
+
+        .logo small {
+            display: block;
+            margin-top: 8px;
+            font: 600 7px 'DM Sans';
+            letter-spacing: 3px
+        }
+
+        header {
+            height: 88px;
+            display: flex;
+            align-items: center;
+            background: #fffaf7
+        }
+
+        .bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%
+        }
+
+        nav {
+            display: flex;
+            gap: 38px;
+            font-size: 12px;
+            font-weight: 600
+        }
+
+        nav .active {
+            color: var(--wine);
+            border-bottom: 2px solid var(--wine);
+            padding-bottom: 9px
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px 23px;
+            border: 0;
+            border-radius: 25px;
+            background: var(--wine);
+            color: #fff;
+            font: 700 12px 'DM Sans';
+            cursor: pointer
+        }
+
+        .eyebrow {
+            color: var(--wine);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 5px;
+            text-transform: uppercase
+        }
+
+        .hero {
+            min-height: 370px;
+            background: linear-gradient(90deg, rgba(255, 223, 220, .98), rgba(255, 223, 220, .88) 46%, rgba(255, 223, 220, .04) 78%), url('assets/images/copos-chocolate-morango.jpg') 76% center/cover
+        }
+
+        .hero .container {
+            padding-top: 44px
+        }
+
+        .hero h1,
+        h2 {
+            margin: 9px 0;
+            color: var(--wine);
+            font-family: 'Playfair Display', serif
+        }
+
+        .hero h1 {
+            max-width: 440px;
+            font-size: 48px;
+            line-height: 1.02;
+            font-style: italic
+        }
+
+        .hero p {
+            max-width: 350px;
+            line-height: 1.5
+        }
+
+        .script {
+            color: #b3425e;
+            font: 37px/.9 'Sacramento', cursive
+        }
+
+        .contact {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            padding: 45px 28px 38px
+        }
+
+        .contact h2 {
+            font-size: 30px
+        }
+
+        .contact-list {
+            display: grid;
+            gap: 10px
+        }
+
+        .contact-card {
+            display: grid;
+            grid-template-columns: 68px 1fr 35px;
+            align-items: center;
+            min-height: 100px;
+            padding: 14px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #fff, #f8e7e4)
+        }
+
+        .icon {
+            display: grid;
+            place-items: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--wine);
+            color: #fff;
+            font-size: 28px
+        }
+
+        .contact-card b {
+            display: block;
+            color: var(--wine);
+            font-size: 14px
+        }
+
+        .contact-card p {
+            margin: 5px 0;
+            color: #735d62;
+            font-size: 11px;
+            line-height: 1.4
+        }
+
+        .arrow {
+            display: grid;
+            place-items: center;
+            width: 33px;
+            height: 33px;
+            border-radius: 50%;
+            background: var(--wine);
+            color: #fff
+        }
+
+        .form {
+            padding: 27px;
+            border-radius: 12px;
+            background: linear-gradient(140deg, #fff, #f6dddd)
+        }
+
+        .form h2 {
+            font-size: 31px
+        }
+
+        .form>p {
+            font-size: 13px;
+            line-height: 1.45
+        }
+
+        .form input,
+        .form select,
+        .form textarea {
+            width: 100%;
+            margin-top: 11px;
+            padding: 14px;
+            border: 1px solid #eccdcb;
+            border-radius: 7px;
+            background: #fffafa;
+            color: #6e4c55;
+            font: 11px 'DM Sans'
+        }
+
+        .form .two {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 11px
+        }
+
+        .form textarea {
+            height: 110px;
+            resize: vertical
+        }
+
+        .form button {
+            width: 100%;
+            margin-top: 15px
+        }
+
+        .secure {
+            margin: 14px 4px 0;
+            color: #866d71;
+            font-size: 10px
+        }
+
+        .visit {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+            margin-bottom: 38px;
+            border-radius: 12px;
+            background: #f8dedb
+        }
+
+        .visit-text {
+            min-height: 290px;
+            padding: 41px;
+            color: #fff;
+            background: linear-gradient(rgba(119, 30, 49, .82), rgba(119, 30, 49, .82)), url('assets/images/vitrine-san-doces.jpg') center/cover
+        }
+
+        .visit-text h2 {
+            color: #fff;
+            font: 42px/.9 'Sacramento', cursive
+        }
+
+        .visit-text p {
+            max-width: 310px;
+            font-size: 12px;
+            line-height: 1.5
+        }
+
+        .visit-text .button {
+            border: 1px solid #fff;
+            background: transparent
+        }
+
+        .map {
+            position: relative;
+            min-height: 290px
+        }
+
+        .map iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            filter: saturate(.65) sepia(.12)
+        }
+
+        footer {
+            padding: 23px 0;
+            color: #fff;
+            background: linear-gradient(100deg, #81293f, #ad405a)
+        }
+
+        footer .logo {
+            color: #fff;
+            font-size: 22px
+        }
+
+        footer span {
+            font-size: 10px
+        }
+
+        @media(max-width:780px) {
+            .container {
+                padding: 0 18px
+            }
+
+            header {
+                height: 70px
+            }
+
+            nav {
+                display: none
+            }
+
+            .hero {
+                min-height: 420px;
+                background-position: 65% center
+            }
+
+            .hero h1 {
+                font-size: 39px
+            }
+
+            .contact,
+            .visit {
+                grid-template-columns: 1fr;
+                padding-left: 18px;
+                padding-right: 18px
+            }
+
+            .contact {
+                gap: 20px
+            }
+
+            .form {
+                padding: 22px
+            }
+
+            .visit {
+                margin-left: 18px;
+                margin-right: 18px
+            }
+
+            .visit-text,
+            .map {
+                min-height: 250px
+            }
+
+            .bar {
+                gap: 12px
+            }
+
+            footer span {
+                text-align: center
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="styles/principal.css">
+</head>
+
+<body id="top">
+     <header class="site-header">
+        <div class="container topbar"><a class="brand" href="home.html">SAN<br>DOCES<small>DOCERIA</small></a>
+            <nav class="main-nav"><a href="home.html">Início</a><a href="produtos.html">Produtos</a><a
+                    href="sobre-nos.html">Sobre Nós</a><a href="encomendas.html">Encomendas</a><a
+                    class="active" href="contato.html">Contato</a></nav><a class="main-btn" href="encomendas.html"><svg class="icon"
+                    viewBox="0 0 24 24">
+                    <path
+                        d="M20.5 3.5A10.8 10.8 0 0 0 12.9 1C7 1 2.2 5.8 2.2 11.7c0 1.9.5 3.7 1.4 5.3L2 23l6.2-1.6a10.7 10.7 0 0 0 4.7 1.1h.1c5.9 0 10.7-4.8 10.7-10.7 0-2.9-1.1-5.6-3.2-7.7Z" />
+                    <path
+                        d="M8 6.8c.2-.4.4-.4.7-.4h.6c.2 0 .4.1.5.4l1 2.3c.1.3.1.5-.1.7l-.7.8c-.1.1-.1.3 0 .4.5 1 1.3 1.9 2.3 2.4.2.1.3.1.5 0l.8-.9c.2-.2.4-.2.7-.1l2.1 1c.3.1.4.3.4.5 0 .4-.2 1.3-.6 1.7-.4.4-1 .6-1.7.5-1.1-.2-2.5-.8-4.2-2.4-1.3-1.2-2.2-2.7-2.4-4.1-.1-.7.1-1.3.5-1.8Z" />
+                </svg>Fazer pedido</a>
+        </div>
+    </header>
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="eyebrow">Entre em contato</div>
+                <h1>Estamos aqui<br>para te atender ♡</h1>
+                <p>Tem alguma dúvida, sugestão ou quer fazer seu pedido? Fale com a gente! Será um prazer te atender e
+                    tornar seu momento ainda mais doce.</p>
+                <div class="script">Doce é sempre<br>melhor quando compartilhado! ♡</div>
+            </div>
+        </section>
+        <section class="container contact">
+            <div>
+                <h2>Nossos contatos　♡</h2>
+                <div class="contact-list"><a class="contact-card" href="https://wa.me/5515991444740" target="_blank"
+                        rel="noopener"><span class="icon">◉</span>
+                        <div><b>WhatsApp<br>(15) 99144-4740</b>
+                            <p>Fale conosco pelo WhatsApp e faça seu pedido de forma rápida e prática!</p>
+                        </div><span class="arrow">→</span>
+                    </a><a class="contact-card" href="#"><span class="icon">◎</span>
+                        <div><b>Instagram<br>@sandoces_confeitaria</b>
+                            <p>Acompanhe nossos doces, novidades e muito mais!</p>
+                        </div><span class="arrow">→</span>
+                    </a><a class="contact-card" href="https://maps.app.goo.gl/aGw49bdpHnLDqECd8" target="_blank"
+                        rel="noopener"><span class="icon">⌖</span>
+                        <div><b>Endereço<br>Tatuí - SP</b>
+                            <p>Estamos localizados em Tatuí - SP. Venha nos visitar!</p>
+                        </div><span class="arrow">→</span>
+                    </a>
+                    <div class="contact-card"><span class="icon">◷</span>
+                        <div><b>Horário de funcionamento<br>Segunda a Sábado</b>
+                            <p>Das 14:30 às 23:30</p>
+                        </div><span class="arrow">→</span>
+                    </div>
+                </div>
+            </div>
+            <form id="mensagem" class="form">
+                <h2>Envie uma mensagem</h2>
+                <p>Preencha os campos abaixo e teremos o maior prazer em responder o seu contato.</p>
+                <div class="two"><input required placeholder="Nome completo *"><input type="email" required
+                        placeholder="E-mail *"></div>
+                <div class="two"><input required placeholder="WhatsApp *"><select required>
+                        <option value="">Assunto *</option>
+                        <option>Dúvida</option>
+                        <option>Encomenda</option>
+                        <option>Sugestão</option>
+                    </select></div><textarea required
+                    placeholder="Sua mensagem *&#10;Escreva aqui sua mensagem..."></textarea><button class="button"
+                    type="submit">⌁　Enviar mensagem</button>
+                <div class="secure">♙　 Seus dados estão seguros conosco.<br>&nbsp;&nbsp;&nbsp;&nbsp; Não compartilhamos
+                    suas informações.</div>
+            </form>
+        </section>
+        <section class="container visit">
+            <div class="visit-text">
+                <div class="eyebrow" style="color:#fff">Venha nos visitar</div>
+                <h2>Estamos te esperando! ♡</h2>
+                <p>Nossa loja física está localizada em Tatuí - SP. Venha conhecer de perto nossos doces e se encantar
+                    com cada detalhe!</p><a class="button" href="https://maps.app.goo.gl/aGw49bdpHnLDqECd8"
+                    target="_blank" rel="noopener">⌖　Ver no mapa　→</a>
+            </div>
+            <div class="map"><iframe title="Mapa San Doce Doceria em Tatuí"
+                    src="https://www.google.com/maps?q=San%20Doce%20Doceria%20Tatui%20SP&output=embed"
+                    loading="lazy"></iframe></div>
+        </section>
+    </main>
+    <footer class="sd-footer"><div class="sd-footer-main"><div class="sd-footer-intro"><a class="sd-footer-brand" href="home.html">SAN<br>DOCES<small>DOCERIA</small></a><p>Doces artesanais feitos com carinho para tornar cada momento ainda mais especial.</p></div><div><h4>Navegação</h4><nav class="sd-footer-links" aria-label="Navegação do rodapé"><a href="home.html">Início</a><a href="produtos.html">Produtos</a><a href="sobre-nos.html">Sobre nós</a><a href="encomendas.html">Encomendas</a><a href="contato.html">Contato</a></nav></div><div class="sd-footer-contact"><h4>Fale conosco</h4><p>(15) 99144-4740</p><p>@sandoces_confeitaria</p><p>Tatuí — SP</p></div><div class="sd-footer-contact"><h4>Horário</h4><p>Segunda a sábado</p><p>Das 14:30 às 23:30</p><a class="sd-footer-cta" href="https://wa.me/5515991444740" target="_blank" rel="noopener">Fazer pedido pelo WhatsApp →</a></div></div><div class="sd-footer-bottom"><span>© 2026 San Doces. Todos os direitos reservados.</span><span>Doces que tornam a vida mais doce! ♡</span><a href="#top">Voltar ao topo ↑</a></div></footer>
+    <script>document.querySelector('form').onsubmit = e => { e.preventDefault(); const n = e.target.querySelector('input').value; window.open('https://wa.me/5515991444740?text=' + encodeURIComponent('Olá! Meu nome é ' + n + ' e gostaria de falar com a San Doces.'), '_blank') };</script>
+</body>
+
+</html>

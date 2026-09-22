@@ -1,0 +1,33 @@
+.custom-switch { 
+  /* Adicione propriedades aqui se necessário */
+} 
+
+.container {
+    background:
+        url("image.png"),
+        linear-gradient(#2907a27b, #2907a27b);
+
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh; 
+    background-repeat: no-repeat;
+    overflow: auto; 
+}
+
+
+
+input[type="checkbox"]:checked { 
+  background-color: red; 
+}
+.text{
+  color: white;
+}
+h1, h2, h3, h4, h5, h6 {
+  color: white;
+}
+.form-label {
+  color: white;
+}
+.form-check-label{
+  color: white;
+}
