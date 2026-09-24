@@ -38,6 +38,25 @@
         ['nome' => 'Beatriz Alves', 'mensagem' => 'Qual o valor do delivery para o bairro Centro?', 'data' => '20/06, 19:45'],
         ['nome' => 'Paulo Santos', 'mensagem' => 'Voces aceitam cartao de credito?', 'data' => '20/06, 16:20'],
     ];
+    $heroIcon = function (string $name, string $class = '') {
+        $icons = [
+            'home' => '<path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.592 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75" />',
+            'cube' => '<path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25m0-9L3 7.5m9 5.25v9M3 7.5v9l9 5.25" />',
+            'shopping-bag' => '<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.452 1.243-1.121 1.243H4.252a1.125 1.125 0 0 1-1.12-1.243l1.262-12A1.125 1.125 0 0 1 5.514 7.5h12.972c.576 0 1.059.435 1.12 1.007Z" />',
+            'chat-bubble' => '<path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.199 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />',
+            'cog' => '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12a7.5 7.5 0 0 0 .12 1.334l-1.1 1.594a1.125 1.125 0 0 0 .223 1.493l1.836 1.414c.43.331 1.04.307 1.44-.06l1.295-1.19a7.473 7.473 0 0 0 1.436.59l.49 1.852c.132.5.585.848 1.102.848h2.316c.517 0 .97-.348 1.102-.848l.49-1.852a7.473 7.473 0 0 0 1.436-.59l1.295 1.19c.4.367 1.01.391 1.44.06l1.836-1.414c.432-.333.526-.95.223-1.493l-1.1-1.594A7.5 7.5 0 1 0 4.5 12Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />',
+            'calendar' => '<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25m10.5-2.25v2.25M3.75 8.25h16.5M5.25 5.25h13.5c.828 0 1.5.672 1.5 1.5v12A1.5 1.5 0 0 1 18.75 20.25H5.25a1.5 1.5 0 0 1-1.5-1.5v-12c0-.828.672-1.5 1.5-1.5Z" />',
+            'star' => '<path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.563.563 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.563.563 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />',
+            'bell' => '<path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022 23.848 23.848 0 0 0 5.455 1.31m5.714 0a3 3 0 0 1-5.714 0" />',
+            'user' => '<path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />',
+            'chevron-down' => '<path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />',
+            'map-pin' => '<path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />',
+            'clock' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />',
+            'clipboard' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4.5h6M9.75 4.5h4.5A2.25 2.25 0 0 1 16.5 6.75V7.5h1.125A2.625 2.625 0 0 1 20.25 10.125v8.25A2.625 2.625 0 0 1 17.625 21H6.375A2.625 2.625 0 0 1 3.75 18.375v-8.25A2.625 2.625 0 0 1 6.375 7.5H7.5v-.75A2.25 2.25 0 0 1 9.75 4.5Z" />',
+        ];
+        $svgClass = trim('hero-icon ' . $class);
+        return '<svg class="' . e($svgClass) . '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">' . ($icons[$name] ?? $icons['star']) . '</svg>';
+    };
 @endphp
 
 <!DOCTYPE html>
@@ -57,15 +76,13 @@
     <aside class="dash-sidebar">
         <a class="dash-logo" href="{{ route('san-doces.home') }}">SAN<br>DOCE<small>DOCERIA</small></a>
         <nav class="dash-menu" aria-label="Menu administrativo">
-            <a class="active" href="{{ route('san-doces.dashboard') }}"><span class="dash-ico home"></span>Inicio</a>
-            <a href="#produtos-admin" data-dashboard-link="produtos"><span class="dash-ico box"></span>Produtos</a>
-            <a href="#pedidos-admin" data-dashboard-link="pedidos"><span class="dash-ico bag"></span>Pedidos</a>
-            <a href="#mensagens-admin" data-dashboard-link="mensagens"><span class="dash-ico message"></span>Mensagens</a>
-            <a href="#config-admin" data-dashboard-link="config"><span class="dash-ico gear"></span>Configuracoes</a>
+            <a class="active" href="{{ route('san-doces.dashboard') }}"><span class="dash-ico">{!! $heroIcon('home') !!}</span>Inicio</a>
+            <a href="#produtos-admin" data-dashboard-link="produtos"><span class="dash-ico">{!! $heroIcon('cube') !!}</span>Produtos</a>
+            <a href="#pedidos-admin" data-dashboard-link="pedidos"><span class="dash-ico">{!! $heroIcon('shopping-bag') !!}</span>Pedidos</a>
+            <a href="#mensagens-admin" data-dashboard-link="mensagens"><span class="dash-ico">{!! $heroIcon('chat-bubble') !!}</span>Mensagens</a>
         </nav>
         <div class="dash-sidebar-decoration" aria-hidden="true">
             <div class="dash-sidebar-note">Doce e sempre<br>uma boa ideia!</div>
-            <img class="dash-sidebar-img" src="{{ asset('assets/images/bolo-morango.jpg') }}" alt="">
         </div>
     </aside>
 
@@ -76,10 +93,10 @@
                 <p>Seja bem-vindo(a) ao painel da San Doce.</p>
             </div>
             <div class="dash-admin">
-                <button class="dash-alert" type="button" aria-label="Notificacoes"><span id="dash-alert-count">0</span></button>
-                <span class="dash-avatar"></span>
+                <button class="dash-alert" type="button" aria-label="Notificacoes">{!! $heroIcon('bell') !!}<span id="dash-alert-count">0</span></button>
+                <span class="dash-avatar">{!! $heroIcon('user') !!}</span>
                 <strong id="dash-admin-name">Administrador</strong>
-                <span class="dash-chevron"></span>
+                <span class="dash-chevron">{!! $heroIcon('chevron-down') !!}</span>
                 <button id="dash-logout" class="dash-logout" type="button">Sair</button>
             </div>
         </header>
@@ -88,7 +105,12 @@
             <section class="dash-metrics" aria-label="Resumo">
                 @foreach ($metrics as $metric)
                     <article class="dash-metric">
-                        <span class="metric-icon {{ $metric['icon'] ?? 'star' }}"></span>
+                        <span class="metric-icon">{!! $heroIcon(match ($metric['icon'] ?? 'star') {
+                            'bag' => 'shopping-bag',
+                            'message' => 'chat-bubble',
+                            'calendar' => 'calendar',
+                            default => 'star',
+                        }) !!}</span>
                         <div>
                             <h2>{{ $metric['label'] }}</h2>
                             <strong>{{ $metric['value'] }}</strong>
@@ -101,7 +123,7 @@
             <section class="dash-grid">
                 <article class="dash-panel dash-address">
                     <div class="panel-title">
-                        <h2><span class="dash-pin"></span>Endereco da Loja</h2>
+                        <h2><span class="dash-pin">{!! $heroIcon('map-pin') !!}</span>Endereco da Loja</h2>
                         <button id="dash-toggle-address" class="dash-link-button" type="button">Editar</button>
                     </div>
                     <div class="address-body">
@@ -148,7 +170,7 @@
 
                 <article class="dash-panel">
                     <div class="panel-title">
-                        <h2><span class="dash-clock"></span>Horario de Funcionamento</h2>
+                        <h2><span class="dash-clock">{!! $heroIcon('clock') !!}</span>Horario de Funcionamento</h2>
                         <button id="dash-toggle-hours" class="dash-link-button" type="button">Editar</button>
                     </div>
                     <div class="hours-card">
@@ -175,7 +197,7 @@
 
                 <article class="dash-panel dash-schedule">
                     <div class="panel-title">
-                        <h2><span class="dash-calendar"></span>Horarios Disponiveis para Agendar Encomendas</h2>
+                        <h2><span class="dash-calendar">{!! $heroIcon('calendar') !!}</span>Horarios Disponiveis para Agendar Encomendas</h2>
                         <button id="dash-toggle-schedule" class="dash-link-button" type="button">Editar</button>
                     </div>
                     <div class="schedule-list">
@@ -200,7 +222,7 @@
             <section id="produtos-admin" class="dash-manage">
                 <article class="dash-panel">
                     <div class="panel-title">
-                        <h2><span class="dash-ico box"></span>Cadastrar Produto</h2>
+                        <h2><span class="dash-ico">{!! $heroIcon('cube') !!}</span>Cadastrar Produto</h2>
                     </div>
                     <form id="cadastro-produto-form" class="dash-product-form" enctype="multipart/form-data">
                         <div class="dash-form-grid">
@@ -231,7 +253,7 @@
 
                 <article class="dash-panel">
                     <div class="panel-title">
-                        <h2><span class="dash-ico box"></span>Produtos Cadastrados</h2>
+                        <h2><span class="dash-ico">{!! $heroIcon('cube') !!}</span>Produtos Cadastrados</h2>
                         <button id="dash-refresh-products" class="dash-link-button" type="button">Atualizar</button>
                     </div>
                     <div id="dash-products-list" class="dash-products-list">
@@ -243,7 +265,7 @@
             <section id="pedidos-admin" class="dash-bottom">
                 <article class="dash-panel">
                     <div class="panel-title">
-                        <h2><span class="dash-orders"></span>Pedidos Recentes</h2>
+                        <h2><span class="dash-orders">{!! $heroIcon('clipboard') !!}</span>Pedidos Recentes</h2>
                         <button id="dash-refresh-orders" class="dash-link-button" type="button">Atualizar</button>
                     </div>
                     <div class="orders-table">
@@ -265,7 +287,7 @@
 
                 <article id="mensagens-admin" class="dash-panel">
                     <div class="panel-title">
-                        <h2><span class="dash-chat"></span>Mensagens do Contato</h2>
+                        <h2><span class="dash-chat">{!! $heroIcon('chat-bubble') !!}</span>Mensagens do Contato</h2>
                         <a href="#">Ver todas</a>
                     </div>
                     <div class="message-list">
@@ -283,12 +305,7 @@
                 </article>
             </section>
 
-            <section id="config-admin" class="dash-panel dash-config">
-                <div class="panel-title">
-                    <h2><span class="dash-ico gear"></span>Configuracoes Rapidas</h2>
-                </div>
-                <p>Use o painel para acompanhar pedidos, atualizar status e manter o catalogo de produtos da San Doce.</p>
-            </section>
+           
         </main>
 
         <footer class="dash-footer">

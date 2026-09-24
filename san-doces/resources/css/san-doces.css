@@ -2460,7 +2460,9 @@ body .sd-footer {
   width: 240px;
   overflow: hidden;
   color: #fff;
-  background: linear-gradient(180deg, #8f2d49 0%, #702039 62%, #5e1b31 100%);
+  background:
+    linear-gradient(180deg, rgba(126, 36, 63, .93) 0%, rgba(113, 31, 57, .84) 46%, rgba(87, 22, 43, .68) 100%),
+    url('/assets/images/bolo-morango.jpg') center bottom / cover no-repeat;
   box-shadow: 12px 0 30px rgba(106, 32, 52, .14);
 }
 
@@ -2606,6 +2608,30 @@ body .sd-footer {
   box-shadow: 0 -7px 0 -4px currentColor, 0 7px 0 -4px currentColor, 7px 0 0 -4px currentColor, -7px 0 0 -4px currentColor;
 }
 
+.hero-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.dash-ico::before,
+.dash-ico::after,
+.metric-icon::before,
+.metric-icon::after,
+.dash-alert::before,
+.dash-avatar::before,
+.dash-avatar::after,
+.dash-pin::before,
+.dash-clock::before,
+.dash-calendar::before,
+.dash-calendar::after,
+.dash-orders::before,
+.dash-orders::after,
+.dash-chat::before,
+.dash-chat::after {
+  content: none;
+}
+
 .dash-sidebar-decoration {
   position: absolute;
   right: 0;
@@ -2627,14 +2653,7 @@ body .sd-footer {
 }
 
 .dash-sidebar-img {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 190px;
-  object-fit: cover;
-  opacity: .88;
-  filter: saturate(1.1);
+  display: none;
 }
 
 .dash-shell {
@@ -2699,6 +2718,11 @@ body .sd-footer {
   border: 0;
 }
 
+.dash-alert .hero-icon {
+  width: 26px;
+  height: 26px;
+}
+
 .dash-alert::before {
   width: 18px;
   height: 20px;
@@ -2723,8 +2747,17 @@ body .sd-footer {
 .dash-avatar {
   width: 48px;
   height: 48px;
+  display: grid;
+  place-items: center;
+  color: #ffe6ea;
   background: linear-gradient(135deg, #cf6380, #97314f);
   border-radius: 50%;
+}
+
+.dash-avatar .hero-icon {
+  width: 31px;
+  height: 31px;
+  stroke-width: 1.7;
 }
 
 .dash-avatar::before {
@@ -2744,11 +2777,8 @@ body .sd-footer {
 }
 
 .dash-chevron {
-  width: 8px;
-  height: 8px;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(45deg);
+  width: 16px;
+  height: 16px;
 }
 
 .dash-main {
@@ -2785,6 +2815,12 @@ body .sd-footer {
   color: var(--dash-wine);
   background: #f7cbd5;
   border-radius: 50%;
+}
+
+.metric-icon .hero-icon {
+  width: 34px;
+  height: 34px;
+  stroke-width: 1.6;
 }
 
 .metric-icon.calendar::before,
@@ -2876,6 +2912,15 @@ body .sd-footer {
   width: 30px;
   height: 30px;
   color: #c33f66;
+}
+
+.dash-pin .hero-icon,
+.dash-clock .hero-icon,
+.dash-calendar .hero-icon,
+.dash-orders .hero-icon,
+.dash-chat .hero-icon {
+  width: 28px;
+  height: 28px;
 }
 
 .dash-pin::before {

@@ -108,10 +108,10 @@ function selecionarProdutoDaUrl(produtos, container) {
 }
 
 function renderizarCategorias(produtos, categorias, container) {
-    const nomes = [...new Set(produtos.map((produto) => produto.categoria).filter(Boolean))];
+    const grupos = gruposDeCategoria(produtos);
     categorias.innerHTML = [
         '<button class="category active" type="button" data-category="all">Todos &rsaquo;</button>',
-        ...nomes.map((nome) => `<button class="category" type="button" data-category="${escapeHtml(nome)}">${escapeHtml(nome)} &rsaquo;</button>`),
+        ...grupos.map((grupo) => `<button class="category" type="button" data-category="${escapeHtml(grupo.key)}">${escapeHtml(grupo.name)} &rsaquo;</button>`),
     ].join('');
 
     categorias.querySelectorAll('.category').forEach((button) => {
@@ -120,7 +120,7 @@ function renderizarCategorias(produtos, categorias, container) {
             button.classList.add('active');
             const categoria = button.dataset.category;
             renderizarProdutos(
-                categoria === 'all' ? produtos : produtos.filter((produto) => produto.categoria === categoria),
+                categoria === 'all' ? produtos : produtos.filter((produto) => chaveCategoria(produto.categoria) === categoria),
                 container,
             );
         });
@@ -169,10 +169,10 @@ function atualizarOpcoesFormulario(produtos) {
         return;
     }
 
-    const categorias = [...new Set(produtos.map((produto) => produto.categoria).filter(Boolean))];
+    const categorias = gruposDeCategoria(produtos);
     select.innerHTML = [
         '<option value="">Categoria do pedido *</option>',
-        ...categorias.map((categoria) => `<option value="${escapeHtml(categoria)}">${escapeHtml(categoria)}</option>`),
+        ...categorias.map((categoria) => `<option value="${escapeHtml(categoria.name)}">${escapeHtml(categoria.name)}</option>`),
     ].join('');
 }
 
@@ -204,6 +204,37 @@ function imagemProduto(produto) {
     }
 
     return '/assets/images/bolo-morango.jpg';
+}
+
+function gruposDeCategoria(produtos) {
+    const grupos = new Map();
+
+    produtos.forEach((produto) => {
+        const key = chaveCategoria(produto.categoria);
+        if (!grupos.has(key)) {
+            grupos.set(key, {
+                key,
+                name: nomeCategoria(produto.categoria),
+            });
+        }
+    });
+
+    return [...grupos.values()];
+}
+
+function chaveCategoria(categoria) {
+    return String(categoria || 'Outros')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, ' ');
+}
+
+function nomeCategoria(categoria) {
+    const nome = String(categoria || 'Outros').trim().replace(/\s+/g, ' ');
+    if (!nome) return 'Outros';
+    return nome.charAt(0).toUpperCase() + nome.slice(1);
 }
 
 function escapeHtml(value) {

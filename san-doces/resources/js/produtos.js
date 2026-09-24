@@ -29,12 +29,12 @@ function renderCategories() {
     const container = document.querySelector('#catalog-categories');
     if (!container) return;
 
-    const categories = [...new Set(catalogState.products.map((product) => product.categoria).filter(Boolean))];
+    const categories = categoryGroups(catalogState.products);
     container.innerHTML = `
         <button class="category active" type="button" data-category="all"><span class="category-icon">▦</span><span>Todos os produtos<small>${catalogState.products.length} ${catalogState.products.length === 1 ? 'produto' : 'produtos'}</small></span></button>
         ${categories.map((category) => {
-            const count = categoryCount(category);
-            return `<button class="category" type="button" data-category="${escapeHtml(category)}"><span class="category-icon">${categoryIcon(category)}</span><span>${escapeHtml(category)}<small>${count} ${count === 1 ? 'produto' : 'produtos'}</small></span></button>`;
+            const count = category.products.length;
+            return `<button class="category" type="button" data-category="${escapeHtml(category.key)}"><span class="category-icon">${categoryIcon(category.name)}</span><span>${escapeHtml(category.name)}<small>${count} ${count === 1 ? 'produto' : 'produtos'}</small></span></button>`;
         }).join('')}
         <div class="love-note">Feito<br>com<br>amor ♡</div>`;
 
@@ -53,7 +53,7 @@ function renderCatalog() {
     if (!container) return;
 
     const filtered = catalogState.products.filter((product) => {
-        const sameCategory = catalogState.category === 'all' || product.categoria === catalogState.category;
+        const sameCategory = catalogState.category === 'all' || categoryKey(product.categoria) === catalogState.category;
         const searchable = normalizeText([product.nome, product.categoria, product.sobre, product.descricao].filter(Boolean).join(' '));
         return sameCategory && searchable.includes(catalogState.query);
     });
@@ -63,10 +63,10 @@ function renderCatalog() {
         return;
     }
 
-    container.innerHTML = [...groupByCategory(filtered).entries()].map(([category, products]) => `
+    container.innerHTML = categoryGroups(filtered).map((category) => `
         <section class="product-group">
-            <div class="group-title"><h3>${escapeHtml(category)}</h3><span>${products.length} ${products.length === 1 ? 'opcao' : 'opcoes'}</span></div>
-            <div class="card-grid">${products.map(productCard).join('')}</div>
+            <div class="group-title"><h3>${escapeHtml(category.name)}</h3><span>${category.products.length} ${category.products.length === 1 ? 'opcao' : 'opcoes'}</span></div>
+            <div class="card-grid">${category.products.map(productCard).join('')}</div>
         </section>`).join('');
 }
 
@@ -77,17 +77,23 @@ function productCard(product) {
     </article>`;
 }
 
-function groupByCategory(products) {
-    return products.reduce((groups, product) => {
-        const category = product.categoria || 'Outros';
-        if (!groups.has(category)) groups.set(category, []);
-        groups.get(category).push(product);
-        return groups;
-    }, new Map());
-}
+function categoryGroups(products) {
+    const groups = new Map();
 
-function categoryCount(category) {
-    return catalogState.products.filter((product) => product.categoria === category).length;
+    products.forEach((product) => {
+        const key = categoryKey(product.categoria);
+        if (!groups.has(key)) {
+            groups.set(key, {
+                key,
+                name: displayCategory(product.categoria),
+                products: [],
+            });
+        }
+
+        groups.get(key).products.push(product);
+    });
+
+    return [...groups.values()];
 }
 
 function categoryIcon(category) {
@@ -109,6 +115,16 @@ function formatPrice(value) {
 
 function normalizeText(value) {
     return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+function categoryKey(category) {
+    return normalizeText(category || 'Outros').replace(/\s+/g, ' ');
+}
+
+function displayCategory(category) {
+    const name = String(category || 'Outros').trim().replace(/\s+/g, ' ');
+    if (!name) return 'Outros';
+    return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
 function escapeHtml(value) {
