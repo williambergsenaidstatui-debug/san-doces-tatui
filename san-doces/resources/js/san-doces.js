@@ -1,4 +1,41 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
+    const mobileMenu = document.querySelector('#mobile-navigation');
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+
+    if (mobileMenu && menuToggle) {
+        menuToggle.hidden = false;
+        const mobileViewport = window.matchMedia('(max-width: 900px)');
+        const closeMenu = () => mobileMenu.close();
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.showModal();
+            menuToggle.setAttribute('aria-expanded', 'true');
+            document.documentElement.classList.add('mobile-menu-open');
+        });
+        mobileMenu.querySelector('.mobile-menu-close').addEventListener('click', closeMenu);
+        mobileMenu.addEventListener('click', (event) => {
+            if (event.target === mobileMenu) {
+                const bounds = mobileMenu.getBoundingClientRect();
+                if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
+                    closeMenu();
+                }
+            }
+            if (event.target.closest('a')) {
+                closeMenu();
+            }
+        });
+        mobileMenu.addEventListener('close', () => {
+            menuToggle.setAttribute('aria-expanded', 'false');
+            document.documentElement.classList.remove('mobile-menu-open');
+            menuToggle.focus({ preventScroll: true });
+        });
+        mobileViewport.addEventListener('change', (event) => {
+            if (!event.matches && mobileMenu.open) {
+                closeMenu();
+            }
+        });
+    }
+
     const categories = document.querySelectorAll('.category');
     const groups = document.querySelectorAll('.product-group');
     const cards = document.querySelectorAll('.product-card');

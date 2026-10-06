@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -14,19 +14,7 @@
 </head>
 
 <body id="top" class="orders-page">
-    <header class="site-header">
-        <div class="container topbar"><a class="brand" href="{{ route('san-doces.home') }}">SAN<br>DOCES<small>DOCERIA</small></a>
-            <nav class="main-nav"><a href="{{ route('san-doces.home') }}">Início</a><a href="{{ route('san-doces.produtos') }}">Produtos</a><a
-                    href="{{ route('san-doces.sobre-nos') }}">Sobre Nós</a><a class="active" href="{{ route('san-doces.encomendas') }}">Encomendas</a><a
-                    href="{{ route('san-doces.contato') }}">Contato</a></nav><a class="main-btn" href="#formulario"><svg class="icon"
-                    viewBox="0 0 24 24">
-                    <path
-                        d="M20.5 3.5A10.8 10.8 0 0 0 12.9 1C7 1 2.2 5.8 2.2 11.7c0 1.9.5 3.7 1.4 5.3L2 23l6.2-1.6a10.7 10.7 0 0 0 4.7 1.1h.1c5.9 0 10.7-4.8 10.7-10.7 0-2.9-1.1-5.6-3.2-7.7Z" />
-                    <path
-                        d="M8 6.8c.2-.4.4-.4.7-.4h.6c.2 0 .4.1.5.4l1 2.3c.1.3.1.5-.1.7l-.7.8c-.1.1-.1.3 0 .4.5 1 1.3 1.9 2.3 2.4.2.1.3.1.5 0l.8-.9c.2-.2.4-.2.7-.1l2.1 1c.3.1.4.3.4.5 0 .4-.2 1.3-.6 1.7-.4.4-1 .6-1.7.5-1.1-.2-2.5-.8-4.2-2.4-1.3-1.2-2.2-2.7-2.4-4.1-.1-.7.1-1.3.5-1.8Z" />
-                </svg>Fazer pedido</a>
-        </div>
-    </header>
+    @include('san-doces.navigation')
   <main>
     <section class="hero">
       <div class="container">
@@ -81,16 +69,29 @@
           <strong>Nenhum produto escolhido ainda</strong>
           <small>Clique em um produto do cardápio para preencher o pedido.</small>
         </div>
-        <input id="nome" name="nome" required placeholder="Nome completo *">
-        <div class="two"><input id="whatsapp" name="whatsapp" required placeholder="WhatsApp *"><input id="email" name="email" type="email" required placeholder="E-mail *">
-        </div><input id="data_encomenda" name="data_encomenda" type="date" required><select id="categoria" name="categoria" required>
+        <div class="order-form-fields">
+        <label for="nome">Nome completo *</label>
+        <input id="nome" name="nome" autocomplete="name" required placeholder="Como podemos te chamar?">
+        <label for="whatsapp">WhatsApp *</label>
+        <input id="whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" required placeholder="(15) 99999-9999">
+        <label for="email">E-mail *</label>
+        <input id="email" name="email" type="email" autocomplete="email" required placeholder="voce@exemplo.com">
+        <label for="data_encomenda">Data da encomenda *</label>
+        <input id="data_encomenda" name="data_encomenda" type="date" required>
+        <label for="categoria">Categoria do pedido *</label>
+        <select id="categoria" name="categoria" required>
           <option value="">Categoria do pedido *</option>
           <option>Bolos</option>
           <option>Doces</option>
           <option>Sobremesas</option>
           <option>Bolos personalizados</option>
-        </select><input id="produto" name="produto" required placeholder="Clique em um produto acima ou descreva seu pedido *"><textarea id="observacao" name="observacao"
-          placeholder="Observações (opcional)&#10;Conte-nos mais sobre o seu pedido..."></textarea><button
+        </select>
+        <label for="produto">Produto desejado *</label>
+        <input id="produto" name="produto" required placeholder="Selecione acima ou descreva seu pedido">
+        <label for="observacao">Observações <span>(opcional)</span></label>
+        <textarea id="observacao" name="observacao" placeholder="Conte sobre sabores, quantidades ou detalhes da ocasião..."></textarea>
+        </div>
+        <button
           class="button" type="submit">◉ &nbsp; Enviar pedido pelo WhatsApp</button>
         <div class="secure">♙ &nbsp; Seus dados estão seguros conosco.<br>&nbsp;&nbsp;&nbsp;&nbsp; Não compartilhamos
           suas informações.</div>
