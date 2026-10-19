@@ -25,20 +25,23 @@ class Pedido extends Model
     protected function casts(): array
     {
         return [
-            'data_encomenda' => 'date',
+            'data_encomenda' => 'datetime',
         ];
     }
 
     public function whatsappUrl(): string
     {
-        $data = $this->data_encomenda?->format('d/m/Y') ?? '';
+        $data = $this->data_encomenda?->format('d/m/Y H:i') ?? '';
 
         $texto = "Ola! Meu nome e {$this->nome} e gostaria de fazer uma encomenda.\n"
             ."Categoria: {$this->categoria}\n"
             ."Pedido: {$this->produto}\n"
             ."Data: {$data}\n"
-            ."WhatsApp: {$this->whatsapp}\n"
-            ."E-mail: {$this->email}";
+            ."WhatsApp: {$this->whatsapp}";
+
+        if ($this->email) {
+            $texto .= "\nE-mail: {$this->email}";
+        }
 
         if ($this->observacao) {
             $texto .= "\nObservacao: {$this->observacao}";

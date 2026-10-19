@@ -1,6 +1,6 @@
 const estadoEncomenda = {
     produtos: [],
-    selecionadoId: null,
+    itens: [],
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,10 +13,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
+        sincronizarCamposPedido();
+
+        if (!estadoEncomenda.itens.length) {
+            mostrarErro('Escolha pelo menos um produto antes de enviar o pedido.');
+            document.querySelector('#order-products')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+        }
 
         const dados = {
             nome: document.querySelector('#nome')?.value.trim(),
-            email: document.querySelector('#email')?.value.trim(),
             whatsapp: document.querySelector('#whatsapp')?.value.trim(),
             data_encomenda: document.querySelector('#data_encomenda')?.value,
             categoria: document.querySelector('#categoria')?.value,
@@ -48,16 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             form.reset();
-            estadoEncomenda.selecionadoId = null;
-            atualizarResumoSelecionado();
-            document.querySelectorAll('.order-product-card').forEach((item) => item.classList.remove('selected'));
+            estadoEncomenda.itens = [];
+            atualizarPedidoSelecionado();
             window.open(resultado.whatsapp_url, '_blank');
         } catch (error) {
-            if (window.Swal) {
-                Swal.fire({ icon: 'error', title: 'Erro!', text: error.message });
-            } else {
-                alert(error.message);
-            }
+            mostrarErro(error.message);
         }
     });
 });
@@ -80,30 +81,24 @@ async function carregarProdutosEncomenda() {
         estadoEncomenda.produtos = Array.isArray(produtos) ? produtos : [];
         renderizarCategorias(estadoEncomenda.produtos, categorias, container);
         renderizarProdutos(estadoEncomenda.produtos, container);
-        atualizarOpcoesFormulario(estadoEncomenda.produtos);
-        selecionarProdutoDaUrl(estadoEncomenda.produtos, container);
+        selecionarProdutoDaUrl(estadoEncomenda.produtos);
     } catch (error) {
         container.innerHTML = `<p class="order-products-empty">${escapeHtml(error.message)}</p>`;
     }
 }
 
-function selecionarProdutoDaUrl(produtos, container) {
+function selecionarProdutoDaUrl(produtos) {
     const productId = new URLSearchParams(window.location.search).get('produto');
     if (!productId) {
         return;
     }
 
-    const product = produtos.find((item) => String(item.id) === productId);
-    const card = container.querySelector(`[data-product-id="${CSS.escape(productId)}"]`);
-    if (!product || !card) {
+    const produto = produtos.find((item) => String(item.id) === productId);
+    if (!produto) {
         return;
     }
 
-    estadoEncomenda.selecionadoId = product.id;
-    document.querySelector('#categoria').value = product.categoria || '';
-    document.querySelector('#produto').value = product.nome || '';
-    card.classList.add('selected');
-    atualizarResumoSelecionado(product);
+    adicionarProdutoAoPedido(produto);
     document.querySelector('#formulario')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -134,66 +129,133 @@ function renderizarProdutos(produtos, container) {
     }
 
     container.innerHTML = produtos.map((produto) => `
-        <article class="card order-product-card ${String(produto.id) === String(estadoEncomenda.selecionadoId) ? 'selected' : ''}" data-product-id="${produto.id}">
+        <article class="card order-product-card ${produtoJaAdicionado(produto.id) ? 'selected' : ''}" data-product-id="${produto.id}">
             <img src="${imagemProduto(produto)}" alt="${escapeHtml(produto.nome)}">
             <div>
                 <small>${escapeHtml(produto.categoria || 'Cardapio')}</small>
                 <b>${escapeHtml(produto.nome)}</b>
                 <p>${escapeHtml(produto.sobre || produto.descricao || '')}</p>
                 <strong>R$ ${Number(produto.preco || 0).toFixed(2).replace('.', ',')}</strong>
-                <button class="order-select-button" type="button">Selecionar</button>
+                <button class="order-select-button" type="button">${produtoJaAdicionado(produto.id) ? 'Adicionado' : 'Adicionar'}</button>
             </div>
         </article>
     `).join('');
 
     container.querySelectorAll('.order-product-card').forEach((card) => {
         card.addEventListener('click', () => {
-            const produto = produtos.find((item) => String(item.id) === card.dataset.productId);
+            const produto = estadoEncomenda.produtos.find((item) => String(item.id) === card.dataset.productId);
             if (!produto) {
                 return;
             }
 
-            document.querySelectorAll('.order-product-card').forEach((item) => item.classList.remove('selected'));
-            card.classList.add('selected');
-            estadoEncomenda.selecionadoId = produto.id;
-            document.querySelector('#categoria').value = produto.categoria || '';
-            document.querySelector('#produto').value = produto.nome || '';
-            atualizarResumoSelecionado(produto);
+            if (produtoJaAdicionado(produto.id)) {
+                removerProdutoDoPedido(produto.id);
+                return;
+            }
+
+            adicionarProdutoAoPedido(produto);
         });
     });
 }
 
-function atualizarOpcoesFormulario(produtos) {
-    const select = document.querySelector('#categoria');
-    if (!select) {
+function adicionarProdutoAoPedido(produto) {
+    if (produtoJaAdicionado(produto.id)) {
         return;
     }
 
-    const categorias = gruposDeCategoria(produtos);
-    select.innerHTML = [
-        '<option value="">Categoria do pedido *</option>',
-        ...categorias.map((categoria) => `<option value="${escapeHtml(categoria.name)}">${escapeHtml(categoria.name)}</option>`),
-    ].join('');
+    estadoEncomenda.itens.push(produto);
+    atualizarPedidoSelecionado();
 }
 
-function atualizarResumoSelecionado(produto = null) {
+function removerProdutoDoPedido(produtoId) {
+    estadoEncomenda.itens = estadoEncomenda.itens.filter((produto) => String(produto.id) !== String(produtoId));
+    atualizarPedidoSelecionado();
+}
+
+function atualizarPedidoSelecionado() {
+    atualizarResumoSelecionado();
+    renderizarItensSelecionados();
+    sincronizarCamposPedido();
+    atualizarCardsSelecionados();
+}
+
+function atualizarResumoSelecionado() {
     const summary = document.querySelector('#order-selected-summary');
     if (!summary) {
         return;
     }
 
-    const escolhido = produto || estadoEncomenda.produtos.find((item) => String(item.id) === String(estadoEncomenda.selecionadoId));
+    const total = estadoEncomenda.itens.reduce((soma, produto) => soma + Number(produto.preco || 0), 0);
 
-    if (!escolhido) {
+    if (!estadoEncomenda.itens.length) {
         summary.classList.remove('has-product');
         summary.querySelector('strong').textContent = 'Nenhum produto escolhido ainda';
-        summary.querySelector('small').textContent = 'Clique em um produto do cardapio para preencher o pedido.';
+        summary.querySelector('small').textContent = 'Clique em um produto do cardapio para adicionar ao pedido.';
         return;
     }
 
     summary.classList.add('has-product');
-    summary.querySelector('strong').textContent = escolhido.nome || 'Produto selecionado';
-    summary.querySelector('small').textContent = `${escolhido.categoria || 'Cardapio'} - R$ ${Number(escolhido.preco || 0).toFixed(2).replace('.', ',')}`;
+    summary.querySelector('strong').textContent = `${estadoEncomenda.itens.length} item(ns) no pedido`;
+    summary.querySelector('small').textContent = `Total estimado: R$ ${total.toFixed(2).replace('.', ',')}`;
+}
+
+function renderizarItensSelecionados() {
+    const lista = document.querySelector('#order-items-list');
+    if (!lista) {
+        return;
+    }
+
+    if (!estadoEncomenda.itens.length) {
+        lista.innerHTML = '';
+        return;
+    }
+
+    lista.innerHTML = estadoEncomenda.itens.map((produto) => `
+        <li>
+            <span><strong>${escapeHtml(produto.nome)}</strong><small>${escapeHtml(produto.categoria || 'Cardapio')} - R$ ${Number(produto.preco || 0).toFixed(2).replace('.', ',')}</small></span>
+            <button type="button" data-remove-product="${produto.id}" aria-label="Remover ${escapeHtml(produto.nome)}">Remover</button>
+        </li>
+    `).join('');
+
+    lista.querySelectorAll('[data-remove-product]').forEach((button) => {
+        button.addEventListener('click', () => removerProdutoDoPedido(button.dataset.removeProduct));
+    });
+}
+
+function sincronizarCamposPedido() {
+    const categoria = document.querySelector('#categoria');
+    const produto = document.querySelector('#produto');
+    if (!categoria || !produto) {
+        return;
+    }
+
+    categoria.value = [...new Set(estadoEncomenda.itens.map((item) => item.categoria || 'Cardapio'))].join(', ');
+    produto.value = estadoEncomenda.itens
+        .map((item) => `${item.nome} - R$ ${Number(item.preco || 0).toFixed(2).replace('.', ',')}`)
+        .join('; ');
+}
+
+function atualizarCardsSelecionados() {
+    document.querySelectorAll('.order-product-card').forEach((card) => {
+        const selecionado = produtoJaAdicionado(card.dataset.productId);
+        card.classList.toggle('selected', selecionado);
+        const button = card.querySelector('.order-select-button');
+        if (button) {
+            button.textContent = selecionado ? 'Adicionado' : 'Adicionar';
+        }
+    });
+}
+
+function produtoJaAdicionado(produtoId) {
+    return estadoEncomenda.itens.some((produto) => String(produto.id) === String(produtoId));
+}
+
+function mostrarErro(message) {
+    if (window.Swal) {
+        Swal.fire({ icon: 'error', title: 'Erro!', text: message });
+    } else {
+        alert(message);
+    }
 }
 
 function imagemProduto(produto) {

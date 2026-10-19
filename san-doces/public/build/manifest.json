@@ -28,7 +28,7 @@
     "src": "_instrument-sans-600-normal-B9e8oLYv.woff"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DKLAURpt.css",
+    "file": "assets/app-3o2iGQiN.css",
     "name": "app",
     "names": [
       "app.css"
@@ -37,7 +37,7 @@
     "isEntry": true
   },
   "resources/css/san-doces.css": {
-    "file": "assets/san-doces-BHhZznVB.css",
+    "file": "assets/san-doces-Dp6FTP2x.css",
     "name": "san-doces",
     "names": [
       "san-doces.css"
@@ -63,8 +63,14 @@
     "src": "resources/js/cadastro_usuario.js",
     "isEntry": true
   },
+  "resources/js/carrinho.js": {
+    "file": "assets/carrinho-Cd4bX9DG.js",
+    "name": "carrinho",
+    "src": "resources/js/carrinho.js",
+    "isEntry": true
+  },
   "resources/js/dashboard.js": {
-    "file": "assets/dashboard-DvpqYdZD.js",
+    "file": "assets/dashboard-eWPx7nKh.js",
     "name": "dashboard",
     "src": "resources/js/dashboard.js",
     "isEntry": true
@@ -76,13 +82,13 @@
     "isEntry": true
   },
   "resources/js/pedidos.js": {
-    "file": "assets/pedidos-7Wo7mvpG.js",
+    "file": "assets/pedidos-3b9iVbgB.js",
     "name": "pedidos",
     "src": "resources/js/pedidos.js",
     "isEntry": true
   },
   "resources/js/produtos.js": {
-    "file": "assets/produtos-LbcNXuma.js",
+    "file": "assets/produtos-bsbP2flY.js",
     "name": "produtos",
     "src": "resources/js/produtos.js",
     "isEntry": true

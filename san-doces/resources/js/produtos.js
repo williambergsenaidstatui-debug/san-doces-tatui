@@ -73,7 +73,7 @@ function renderCatalog() {
 function productCard(product) {
     return `<article class="product-card" data-name="${escapeHtml(product.nome)}">
         <div class="product-image"><img src="${escapeHtml(productImage(product))}" alt="${escapeHtml(product.nome)}" loading="lazy"><b class="heart" aria-hidden="true">♡</b></div>
-        <div class="product-info"><h4>${escapeHtml(product.nome)}</h4><p>${escapeHtml(product.sobre || product.descricao || '')}</p><div class="price">R$ ${formatPrice(product.preco)}</div><a class="details" href="/encomendas?produto=${encodeURIComponent(product.id)}">Fazer pedido →</a></div>
+        <div class="product-info"><h4>${escapeHtml(product.nome)}</h4><p>${escapeHtml(product.sobre || product.descricao || '')}</p><div class="price">R$ ${formatPrice(product.preco)}</div><a class="details" href="/carrinho?produto=${encodeURIComponent(product.id)}">Comprar →</a></div>
     </article>`;
 }
 

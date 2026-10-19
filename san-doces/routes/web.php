@@ -14,3 +14,4 @@ Route::view('/contato', 'san-doces.contato')->name('san-doces.contato');
 Route::view('/login-dashboard', 'san-doces.login')->name('san-doces.login');
 Route::view('/cadastro_usuario', 'san-doces.cadastro-user')->name('san-doces.cadastro_usuario');
 Route::view('/dashboard', 'san-doces.dashboard')->name('san-doces.dashboard');
+Route::view('/carrinho', 'san-doces.carrinho')->name('san-doces.carrinho');

@@ -7,6 +7,7 @@ use App\Models\HorarioEncomenda;
 use App\Models\HorarioFuncionamento;
 use App\Models\MensagemContato;
 use App\Models\Pedido;
+use App\Models\Pagamentos\PagamentoPedido;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -87,7 +88,6 @@ class DocesController extends Controller
     {
         $pedido = Pedido::create($request->validate([
             'nome' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
             'whatsapp' => 'required|string|max:20',
             'data_encomenda' => 'required|date|after_or_equal:today',
             'categoria' => 'required|string|max:255',
@@ -199,6 +199,17 @@ class DocesController extends Controller
     public function dashboard_resumo(): JsonResponse
     {
         $pedidos = Pedido::latest()->take(10)->get();
+        $pagamentos = PagamentoPedido::with('cliente')->latest()->take(10)->get();
+        $pedidosRecentes = $pedidos
+            ->map(fn (Pedido $pedido) => $this->formatarPedido($pedido))
+            ->concat($pagamentos->map(fn (PagamentoPedido $pedido) => $this->formatarPagamentoPedido($pedido)))
+            ->sortByDesc('sort_date')
+            ->take(10)
+            ->map(function (array $pedido) {
+                unset($pedido['sort_date']);
+                return $pedido;
+            })
+            ->values();
 
         $horarioFuncionamento = HorarioFuncionamento::query()->first();
         $horariosAgenda = HorarioEncomenda::where('ativo', true)->get(['dia', 'horario']);
@@ -206,12 +217,12 @@ class DocesController extends Controller
 
         return response()->json([
             'metrics' => [
-                ['label' => 'Pedidos Realizados', 'value' => Pedido::count(), 'change' => 'Total de pedidos recebidos', 'icon' => 'bag'],
+                ['label' => 'Pedidos Realizados', 'value' => Pedido::count() + PagamentoPedido::count(), 'change' => 'Total de pedidos recebidos', 'icon' => 'bag'],
                 ['label' => 'Mensagens no Contato', 'value' => MensagemContato::count(), 'change' => 'Mensagens recebidas pelo site', 'icon' => 'message'],
-                ['label' => 'Encomendas Agendadas', 'value' => Pedido::whereDate('data_encomenda', '>=', today())->count(), 'change' => 'Pedidos com data futura', 'icon' => 'calendar'],
-                ['label' => 'Clientes Ativos', 'value' => Pedido::distinct('email')->count('email'), 'change' => 'Clientes unicos por e-mail', 'icon' => 'star'],
+                ['label' => 'Encomendas Agendadas', 'value' => Pedido::whereDate('data_encomenda', '>=', today())->count() + PagamentoPedido::whereDate('scheduled_at', '>=', today())->count(), 'change' => 'Pedidos com data futura', 'icon' => 'calendar'],
+                ['label' => 'Pagamentos Online', 'value' => PagamentoPedido::where('payment_channel', 'asaas')->count(), 'change' => 'Pedidos conectados ao Asaas', 'icon' => 'star'],
             ],
-            'pedidosRecentes' => $pedidos->map(fn (Pedido $pedido) => $this->formatarPedido($pedido))->values(),
+            'pedidosRecentes' => $pedidosRecentes,
             'produtos' => DocesprodutosModel::latest()->get(),
             'horarioFuncionamento' => $horarioFuncionamento ?: [
                 'dias' => 'Segunda a Sabado',
@@ -243,15 +254,59 @@ class DocesController extends Controller
         return [
             'id' => '#'.$pedido->id,
             'raw_id' => $pedido->id,
+            'source' => 'pedido',
             'cliente' => $pedido->nome,
             'produtos' => trim($pedido->categoria.' - '.$pedido->produto),
             'total' => 'A combinar',
             'status' => $pedido->status,
             'data' => optional($pedido->created_at)->format('d/m - H:i'),
+            'sort_date' => $pedido->created_at,
             'whatsapp' => $pedido->whatsapp,
             'email' => $pedido->email,
             'observacao' => $pedido->observacao,
         ];
+    }
+
+    private function formatarPagamentoPedido(PagamentoPedido $pedido): array
+    {
+        $status = [
+            PagamentoPedido::STATUS_PENDING => 'Em preparo',
+            PagamentoPedido::STATUS_PAID => 'Entregue',
+            PagamentoPedido::STATUS_FAILED => 'Cancelado',
+        ][$pedido->status] ?? 'Em preparo';
+
+        $observacao = collect([
+            'Codigo: '.$pedido->code,
+            'Pagamento: '.$this->rotuloPagamento($pedido->payment_method),
+            $pedido->asaas_status ? 'Status Asaas: '.$pedido->asaas_status : null,
+            $pedido->invoice_url ? 'Link de pagamento: '.$pedido->invoice_url : null,
+        ])->filter()->join("\n");
+
+        return [
+            'id' => '#PG'.$pedido->id,
+            'raw_id' => $pedido->id,
+            'source' => 'pagamento',
+            'cliente' => $pedido->cliente?->name ?? data_get($pedido->customer_data, 'nome', 'Cliente'),
+            'produtos' => $pedido->description,
+            'total' => 'R$ '.number_format((float) $pedido->amount, 2, ',', '.'),
+            'status' => $status,
+            'data' => optional($pedido->created_at)->format('d/m - H:i'),
+            'sort_date' => $pedido->created_at,
+            'whatsapp' => $pedido->cliente?->phone ?? data_get($pedido->customer_data, 'whatsapp'),
+            'email' => $pedido->cliente?->email ?? data_get($pedido->customer_data, 'email'),
+            'observacao' => $observacao,
+        ];
+    }
+
+    private function rotuloPagamento(?string $method): string
+    {
+        return [
+            'dinheiro' => 'Dinheiro',
+            'pix' => 'PIX',
+            'cartao_credito_online' => 'Cartao de Credito Online',
+            'cartao_debito_maquininha' => 'Cartao de Debito - Maquininha',
+            'cartao_credito_maquininha' => 'Cartao de Credito - Maquininha',
+        ][$method] ?? (string) $method;
     }
 
     private function regras(): array
@@ -278,3 +333,4 @@ class DocesController extends Controller
         Storage::disk('public')->delete(substr($imagem, strlen('storage/')));
     }
 }
+

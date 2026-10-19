@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('DOMContentLoaded', () => {
     if (!document.body.classList.contains('dashboard-page')) {
         return;
     }
@@ -182,6 +182,10 @@ function inicializarEnderecoLoja() {
 
 function inicializarCadastroProduto(api) {
     const form = document.querySelector('#cadastro-produto-form');
+    let productIdInput = document.querySelector('#produto_id');
+    const formTitle = document.querySelector('#dash-product-form-title');
+    const submitButton = document.querySelector('#dash-product-submit') || form?.querySelector('button[type= submit]');
+    let cancelButton = document.querySelector('#dash-product-cancel');
     const imageInput = document.querySelector('#produto_imagem');
     const imageUrlInput = document.querySelector('#produto_imagem_url');
     const pasteZone = document.querySelector('#produto-imagem-colar');
@@ -190,6 +194,22 @@ function inicializarCadastroProduto(api) {
 
     if (!form) {
         return;
+    }
+
+    if (!productIdInput) {
+        productIdInput = document.createElement('input');
+        productIdInput.type = 'hidden';
+        productIdInput.id = 'produto_id';
+        form.prepend(productIdInput);
+    }
+
+    if (!cancelButton) {
+        cancelButton = document.createElement('button');
+        cancelButton.id = 'dash-product-cancel';
+        cancelButton.className = 'dash-action muted is-hidden';
+        cancelButton.type = 'button';
+        cancelButton.textContent = 'Cancelar edicao';
+        submitButton?.insertAdjacentElement('afterend', cancelButton);
     }
 
     const limparPreview = () => {
@@ -208,6 +228,45 @@ function inicializarCadastroProduto(api) {
         preview.querySelector('img').src = src;
         preview.classList.remove('is-hidden');
     };
+
+    const limparModoEdicao = () => {
+        form.reset();
+        productIdInput.value = '';
+        form.dataset.mode = 'create';
+        limparPreview();
+        if (formTitle) {
+            formTitle.textContent = 'Cadastrar Produto';
+        }
+        if (submitButton) {
+            submitButton.textContent = 'Salvar produto';
+        }
+        cancelButton?.classList.add('is-hidden');
+    };
+
+    const preencherModoEdicao = (produto) => {
+        productIdInput.value = produto.id || '';
+        form.dataset.mode = 'edit';
+        form.querySelector('#produto_nome').value = produto.nome || '';
+        form.querySelector('#produto_categoria').value = produto.categoria || '';
+        form.querySelector('#produto_preco').value = produto.preco ?? '';
+        form.querySelector('#produto_sobre').value = produto.sobre || '';
+        form.querySelector('#produto_descricao').value = produto.descricao || '';
+        imageInput.value = '';
+        imageUrlInput.value = /^https?:\/\//i.test(produto.imagem || '') ? produto.imagem : '';
+        limparPreview();
+        mostrarPreview(imagemProduto(produto));
+        if (formTitle) {
+            formTitle.textContent = 'Editar Produto';
+        }
+        if (submitButton) {
+            submitButton.textContent = 'Salvar alteracoes';
+        }
+        cancelButton?.classList.remove('is-hidden');
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        form.querySelector('#produto_nome')?.focus({ preventScroll: true });
+    };
+
+    window.iniciarEdicaoProduto = preencherModoEdicao;
 
     imageInput?.addEventListener('change', () => {
         limparPreview();
@@ -261,26 +320,36 @@ function inicializarCadastroProduto(api) {
         limparPreview();
     });
 
+    cancelButton?.addEventListener('click', limparModoEdicao);
+
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const dados = new FormData(form);
+        dados.delete('id');
+        const editandoId = productIdInput.value;
+        const editando = form.dataset.mode === 'edit' && editandoId;
+
+        if (editando && !imageInput.files?.length && !imageUrlInput.value.trim()) {
+            dados.delete('imagem');
+        }
+        if (editando) {
+            dados.append('_method', 'PUT');
+        }
 
         try {
-            await api('/api/cadastro_doces', {
+            await api(editando ? '/api/atualizar_doces/' + editandoId : '/api/cadastro_doces', {
                 method: 'POST',
                 body: dados,
             });
-            form.reset();
-            limparPreview();
+            limparModoEdicao();
             await carregarDashboard(api);
-            avisar('success', 'Produto cadastrado!', 'O item ja aparece na lista do dashboard.');
+            avisar('success', editando ? 'Produto atualizado!' : 'Produto cadastrado!', editando ? 'As alteracoes ja aparecem na lista.' : 'O item ja aparece na lista do dashboard.');
         } catch (error) {
-            avisar('error', 'Erro ao cadastrar', error.message);
+            avisar('error', editando ? 'Erro ao editar' : 'Erro ao cadastrar', error.message);
         }
     });
 }
-
 async function carregarUsuario(api) {
     try {
         const usuario = await api('/api/user');
@@ -426,7 +495,7 @@ function atualizarPedidos(pedidos, api) {
                 <span>${escapeHtml(pedido.produtos)}</span>
                 <span>${escapeHtml(pedido.total)}</span>
                 <span>
-                    <select class="dash-status ${classeStatus(pedido.status)}" data-pedido-id="${pedido.raw_id}">
+                    <select class="dash-status ${classeStatus(pedido.status)}" data-pedido-id="${pedido.raw_id}" data-order-source="${escapeHtml(pedido.source || 'pedido')}">
                         ${['Em preparo', 'Entregue', 'Cancelado'].map((status) => `
                             <option value="${status}" ${status === pedido.status ? 'selected' : ''}>${status}</option>
                         `).join('')}
@@ -434,10 +503,10 @@ function atualizarPedidos(pedidos, api) {
                 </span>
                 <span class="orders-date-actions">
                     ${escapeHtml(pedido.data || '')}
-                    <button class="dash-mini-button" type="button" data-order-details="${pedido.raw_id}">Detalhes</button>
+                    <button class="dash-mini-button" type="button" data-order-details="${escapeHtml((pedido.source || 'pedido') + '-' + pedido.raw_id)}">Detalhes</button>
                 </span>
             </div>
-            <div class="orders-detail is-hidden" data-order-detail-row="${pedido.raw_id}">
+            <div class="orders-detail is-hidden" data-order-detail-row="${escapeHtml((pedido.source || 'pedido') + '-' + pedido.raw_id)}">
                 <strong>Contato</strong>
                 <span>${escapeHtml(pedido.whatsapp || 'Sem WhatsApp')}</span>
                 <span>${escapeHtml(pedido.email || 'Sem e-mail')}</span>
@@ -457,7 +526,10 @@ function atualizarPedidos(pedidos, api) {
     table.querySelectorAll('.dash-status').forEach((select) => {
         select.addEventListener('change', async () => {
             try {
-                await api(`/api/pedidos/${select.dataset.pedidoId}/status`, {
+                const endpoint = select.dataset.orderSource === 'pagamento'
+                    ? `/api/pagamentos/pedidos/${select.dataset.pedidoId}/status`
+                    : `/api/pedidos/${select.dataset.pedidoId}/status`;
+                await api(endpoint, {
                     method: 'PATCH',
                     body: JSON.stringify({ status: select.value }),
                 });
@@ -475,40 +547,72 @@ function atualizarProdutos(produtos, api) {
         return;
     }
 
+    container.replaceChildren();
+
     if (!produtos.length) {
-        container.innerHTML = '<p class="dash-empty">Nenhum produto cadastrado ainda.</p>';
+        const empty = document.createElement('p');
+        empty.className = 'dash-empty';
+        empty.textContent = 'Nenhum produto cadastrado ainda.';
+        container.append(empty);
         return;
     }
 
-    container.innerHTML = produtos.map((produto) => `
-        <article class="dash-product-item">
-            <img src="${imagemProduto(produto)}" alt="${escapeHtml(produto.nome)}">
-            <div>
-                <strong>${escapeHtml(produto.nome)}</strong>
-                <span>${escapeHtml(produto.categoria)} - R$ ${Number(produto.preco || 0).toFixed(2).replace('.', ',')}</span>
-                <p>${escapeHtml(produto.sobre || produto.descricao || '')}</p>
-            </div>
-            <button class="dash-action danger" type="button" data-delete-product="${produto.id}">Excluir</button>
-        </article>
-    `).join('');
+    produtos.forEach((produto) => {
+        const item = document.createElement('article');
+        item.className = 'dash-product-item';
 
-    container.querySelectorAll('[data-delete-product]').forEach((button) => {
-        button.addEventListener('click', async () => {
+        const image = document.createElement('img');
+        image.src = imagemProduto(produto);
+        image.alt = produto.nome || '';
+
+        const info = document.createElement('div');
+        const name = document.createElement('strong');
+        name.textContent = produto.nome || '';
+        const price = document.createElement('span');
+        price.textContent = (produto.categoria || '') + ' - R$ ' + Number(produto.preco || 0).toFixed(2).replace('.', ',');
+        const description = document.createElement('p');
+        description.textContent = produto.sobre || produto.descricao || '';
+        info.append(name, price, description);
+
+        const actions = document.createElement('div');
+        actions.className = 'dash-product-actions';
+
+        const editButton = document.createElement('button');
+        editButton.className = 'dash-action muted';
+        editButton.type = 'button';
+        editButton.textContent = 'Editar';
+        editButton.addEventListener('click', async () => {
+            try {
+                const produtoAtualizado = await api('/api/buscar_doces/' + produto.id);
+                window.iniciarEdicaoProduto?.(produtoAtualizado);
+            } catch (error) {
+                avisar('error', 'Erro ao carregar produto', error.message);
+            }
+        });
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'dash-action danger';
+        deleteButton.type = 'button';
+        deleteButton.textContent = 'Excluir';
+        deleteButton.addEventListener('click', async () => {
             const confirmar = window.confirm('Deseja excluir este produto?');
             if (!confirmar) {
                 return;
             }
 
             try {
-                await api(`/api/excluir_doces/${button.dataset.deleteProduct}`, { method: 'DELETE' });
+                await api('/api/excluir_doces/' + produto.id, { method: 'DELETE' });
                 await carregarDashboard(api);
             } catch (error) {
                 avisar('error', 'Erro ao excluir produto', error.message);
             }
         });
+
+        actions.append(editButton, deleteButton);
+        item.append(image, info, actions);
+        container.append(item);
     });
 }
-
 function atualizarHorarioFuncionamento(horario) {
     if (!horario) {
         return;
@@ -673,3 +777,4 @@ function escapeHtml(value) {
         "'": '&#039;',
     }[char]));
 }
+

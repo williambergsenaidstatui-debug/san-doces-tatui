@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+﻿import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';
 import tailwindcss from '@tailwindcss/vite';
@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/js/login.js',
                 'resources/js/pedidos.js',
                 'resources/js/produtos.js',
+                'resources/js/carrinho.js',
                 'resources/js/cadastro_produto.js',
                 'resources/js/dashboard.js'
             ],
@@ -31,3 +32,5 @@ export default defineConfig({
         },
     },
 });
+
+
